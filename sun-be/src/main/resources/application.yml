@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: Sun-HSK
+
+  # ==================== DataSource ====================
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/sunhsk}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:dokiet999}
+    driver-class-name: org.postgresql.Driver
+
+  # ==================== JPA ====================
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+
+  # ==================== Flyway ====================
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  # ==================== OAuth2 Client ====================
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:your-google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+# ==================== Server ====================
+server:
+  port: ${SERVER_PORT:8081}
+
+# ==================== App Config ====================
+app:
+  jwt:
+    secret: ${JWT_SECRET:sun-hsk-super-secret-key-at-least-256-bits-long-for-hs256-algo}
+    access-token-expiration: ${JWT_ACCESS_EXP:900000}      # 15 phút (ms)
+    refresh-token-expiration: ${JWT_REFRESH_EXP:604800000} # 7 ngày (ms)
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+# ==================== Actuator ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# ==================== Logging ====================
+logging:
+  level:
+    com.Kiet.Sun_HSK: DEBUG
+    org.springframework.security: INFO
