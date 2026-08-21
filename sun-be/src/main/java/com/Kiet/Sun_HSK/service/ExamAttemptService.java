@@ -47,7 +47,7 @@ public class ExamAttemptService {
 
     @Transactional
     public AttemptStartResponse startAttempt(UUID examId, String userEmail) {
-        Exam exam = examRepository.findByIdAndStatus(examId, ExamStatus.PUBLISHED)
+        Exam exam = examRepository.findByIdAndDeletedAtIsNullAndStatus(examId, ExamStatus.PUBLISHED)
                 .orElseThrow(() -> new AppException(ErrorCode.EXAM_NOT_FOUND));
 
         User user = userRepository.findByEmail(userEmail)
@@ -84,7 +84,7 @@ public class ExamAttemptService {
     public void saveAnswer(UUID attemptId, String userEmail, AnswerItemRequest req) {
         ExamAttempt attempt = getValidAttempt(attemptId, userEmail);
 
-        Question question = questionRepository.findById(req.getQuestionId())
+        Question question = questionRepository.findByIdAndDeletedAtIsNull(req.getQuestionId())
                 .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
 
         // Upsert: tìm câu trả lời cũ hoặc tạo mới
@@ -110,7 +110,7 @@ public class ExamAttemptService {
         if (req.getAnswers() != null) {
             for (AnswerItemRequest answerReq : req.getAnswers()) {
                 if (answerReq.getQuestionId() == null) continue;
-                questionRepository.findById(answerReq.getQuestionId()).ifPresent(q -> {
+                questionRepository.findByIdAndDeletedAtIsNull(answerReq.getQuestionId()).ifPresent(q -> {
                     AttemptAnswer answer = answerRepository
                             .findByAttemptIdAndQuestionId(attemptId, q.getId())
                             .orElse(AttemptAnswer.builder().attempt(attempt).question(q).build());
@@ -122,13 +122,15 @@ public class ExamAttemptService {
 
         // Load toàn bộ câu hỏi và options của đề để chấm điểm (bulk, tránh N+1)
         List<ExamSection> sections = sectionRepository
-                .findByExamIdOrderBySortOrder(attempt.getExam().getId());
+                .findByExamIdAndDeletedAtIsNullOrderBySortOrder(attempt.getExam().getId());
         List<UUID> sectionIds = sections.stream().map(ExamSection::getId).toList();
-        List<Question> questions = questionRepository.findBySectionIdIn(sectionIds);
+        List<Question> questions = sectionIds.isEmpty()
+                ? List.of()
+                : questionRepository.findBySectionIdInAndDeletedAtIsNull(sectionIds);
         List<UUID> questionIds = questions.stream().map(Question::getId).toList();
         List<QuestionOption> allOptions = questionIds.isEmpty()
                 ? List.of()
-                : optionRepository.findByQuestionIdIn(questionIds);
+                : optionRepository.findByQuestionIdInAndDeletedAtIsNull(questionIds);
 
         // Map để tra cứu nhanh
         Map<UUID, Question> questionMap = questions.stream()
@@ -242,7 +244,7 @@ public class ExamAttemptService {
                 .map(a -> a.getQuestion().getId()).toList();
         List<QuestionOption> allOptions = questionIds.isEmpty()
                 ? List.of()
-                : optionRepository.findByQuestionIdIn(questionIds);
+                : optionRepository.findByQuestionIdInAndDeletedAtIsNull(questionIds);
         Map<UUID, List<QuestionOption>> optionsByQuestion = allOptions.stream()
                 .collect(Collectors.groupingBy(o -> o.getQuestion().getId()));
 

@@ -15,12 +15,16 @@ import java.util.UUID;
 @Repository
 public interface ExamRepository extends JpaRepository<Exam, UUID> {
 
-    Page<Exam> findByStatus(ExamStatus status, Pageable pageable);
+    Page<Exam> findByDeletedAtIsNullAndStatus(ExamStatus status, Pageable pageable);
 
-    Page<Exam> findByStatusAndHskVersionAndHskLevel(
+    Page<Exam> findByDeletedAtIsNullAndStatusAndHskVersionAndHskLevel(
             ExamStatus status, HskVersion hskVersion, int hskLevel, Pageable pageable);
 
-    Page<Exam> findByStatusAndExamType(ExamStatus status, ExamType examType, Pageable pageable);
+    Page<Exam> findByDeletedAtIsNullAndStatusAndExamType(ExamStatus status, ExamType examType, Pageable pageable);
 
-    Optional<Exam> findByIdAndStatus(UUID id, ExamStatus status);
+    Optional<Exam> findByIdAndDeletedAtIsNull(UUID id);
+
+    Optional<Exam> findByIdAndDeletedAtIsNullAndStatus(UUID id, ExamStatus status);
+
+    Page<Exam> findByDeletedAtIsNull(Pageable pageable);
 }

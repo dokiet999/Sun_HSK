@@ -4,11 +4,14 @@ import com.Kiet.Sun_HSK.enums.QuestionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "questions")
+@SQLDelete(sql = "UPDATE questions SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -59,4 +62,7 @@ public class Question {
      */
     @Column(name = "correct_answer", columnDefinition = "TEXT")
     String correctAnswer;
+
+    @Column(name = "deleted_at")
+    LocalDateTime deletedAt;
 }

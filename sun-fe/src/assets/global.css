@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --blue-950: #082a63;
+  --blue-900: #0b3d91;
+  --blue-800: #1557c0;
+  --blue-700: #1769e0;
+  --blue-600: #2382f6;
+  --blue-500: #3b9cff;
+  --blue-100: #eaf4ff;
+  --blue-50:  #f5faff;
+  --text:     #142033;
+  --muted:    #60708a;
+  --line:     #dce8f6;
+  --white:    #fff;
+  --shadow:   0 18px 50px rgba(16, 70, 140, 0.12);
+  --radius:   22px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font: inherit; cursor: pointer; }
+ul { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4 { margin: 0; }
+p { margin: 0; }
+
+.container {
+  width: min(1160px, calc(100% - 40px));
+  margin: auto;
+}
+
+/* Prevent horizontal overflow globally */
+body { overflow-x: hidden; }
+
+/* Tighter padding on small phones */
+@media (max-width: 390px) {
+  .container {
+    width: min(1160px, calc(100% - 24px));
+  }
+}

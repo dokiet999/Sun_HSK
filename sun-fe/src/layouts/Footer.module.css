@@ -1,0 +1,51 @@
+.footer {
+  background: #071f48;
+  color: #b8c9df;
+  padding: 42px 0;
+}
+
+.grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+}
+
+.brand {
+  color: #fff;
+  font-weight: 900;
+  font-size: 20px;
+  margin-bottom: 9px;
+}
+
+.desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #b8c9df;
+}
+
+.links {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.link {
+  color: #b8c9df;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #fff;
+}
+
+@media (max-width: 650px) {
+  .grid {
+    flex-direction: column;
+  }
+
+  .links {
+    margin-top: 22px;
+  }
+}

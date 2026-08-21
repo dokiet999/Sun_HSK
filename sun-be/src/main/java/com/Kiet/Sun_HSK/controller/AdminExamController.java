@@ -72,6 +72,19 @@ public class AdminExamController {
     }
 
     /**
+     * PUT /api/v1/admin/exams/{id}
+     * Cập nhật thông tin đề thi.
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ExamSummaryResponse>> updateExam(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateExamRequest request
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success("Cập nhật đề thi thành công", examService.updateExam(id, request)));
+    }
+
+    /**
      * DELETE /api/v1/admin/exams/{id}
      * Xóa đề thi.
      */
@@ -97,6 +110,29 @@ public class AdminExamController {
                         examService.addSection(id, request)));
     }
 
+    /**
+     * PUT /api/v1/admin/exams/sections/{sectionId}
+     * Cập nhật phần thi.
+     */
+    @PutMapping("/sections/{sectionId}")
+    public ResponseEntity<ApiResponse<SectionResponse>> updateSection(
+            @PathVariable UUID sectionId,
+            @Valid @RequestBody UpdateSectionRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật phần thi thành công",
+                examService.updateSection(sectionId, request)));
+    }
+
+    /**
+     * DELETE /api/v1/admin/exams/sections/{sectionId}
+     * Xóa phần thi.
+     */
+    @DeleteMapping("/sections/{sectionId}")
+    public ResponseEntity<ApiResponse<Void>> deleteSection(@PathVariable UUID sectionId) {
+        examService.deleteSection(sectionId);
+        return ResponseEntity.ok(ApiResponse.success("Đã xóa phần thi"));
+    }
+
     // ── Quản lý câu hỏi ──────────────────────────────────────────────────────
 
     /**
@@ -114,6 +150,29 @@ public class AdminExamController {
     }
 
     /**
+     * PUT /api/v1/admin/exams/questions/{questionId}
+     * Cập nhật câu hỏi.
+     */
+    @PutMapping("/questions/{questionId}")
+    public ResponseEntity<ApiResponse<QuestionResponse>> updateQuestion(
+            @PathVariable UUID questionId,
+            @Valid @RequestBody UpdateQuestionRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật câu hỏi thành công",
+                examService.updateQuestion(questionId, request)));
+    }
+
+    /**
+     * DELETE /api/v1/admin/exams/questions/{questionId}
+     * Xóa câu hỏi.
+     */
+    @DeleteMapping("/questions/{questionId}")
+    public ResponseEntity<ApiResponse<Void>> deleteQuestion(@PathVariable UUID questionId) {
+        examService.deleteQuestion(questionId);
+        return ResponseEntity.ok(ApiResponse.success("Đã xóa câu hỏi"));
+    }
+
+    /**
      * POST /api/v1/admin/exams/questions/{questionId}/options
      * Thêm lựa chọn đáp án cho câu hỏi.
      */
@@ -125,5 +184,28 @@ public class AdminExamController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Thêm lựa chọn thành công",
                         examService.addOption(questionId, request)));
+    }
+
+    /**
+     * PUT /api/v1/admin/exams/options/{optionId}
+     * Cập nhật lựa chọn.
+     */
+    @PutMapping("/options/{optionId}")
+    public ResponseEntity<ApiResponse<QuestionOptionResponse>> updateOption(
+            @PathVariable UUID optionId,
+            @Valid @RequestBody UpdateQuestionOptionRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật lựa chọn thành công",
+                examService.updateOption(optionId, request)));
+    }
+
+    /**
+     * DELETE /api/v1/admin/exams/options/{optionId}
+     * Xóa lựa chọn.
+     */
+    @DeleteMapping("/options/{optionId}")
+    public ResponseEntity<ApiResponse<Void>> deleteOption(@PathVariable UUID optionId) {
+        examService.deleteOption(optionId);
+        return ResponseEntity.ok(ApiResponse.success("Đã xóa lựa chọn"));
     }
 }

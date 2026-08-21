@@ -6,15 +6,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface QuestionOptionRepository extends JpaRepository<QuestionOption, UUID> {
 
-    List<QuestionOption> findByQuestionIdOrderBySortOrder(UUID questionId);
+    List<QuestionOption> findByQuestionIdAndDeletedAtIsNullOrderBySortOrder(UUID questionId);
 
     /** Bulk load options cho nhiều câu hỏi cùng lúc (tránh N+1 khi chấm bài) */
-    List<QuestionOption> findByQuestionIdIn(Collection<UUID> questionIds);
+    List<QuestionOption> findByQuestionIdInAndDeletedAtIsNull(Collection<UUID> questionIds);
+
+    Optional<QuestionOption> findByIdAndDeletedAtIsNull(UUID id);
 
     void deleteByQuestionId(UUID questionId);
 }

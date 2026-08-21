@@ -14,7 +14,7 @@ import java.util.List;
 
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CorsConfig {
+public class    CorsConfig {
 
     @Value("${app.cors.allowed-origins}")
     String allowedOriginsStr;

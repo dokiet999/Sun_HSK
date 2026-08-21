@@ -1,0 +1,168 @@
+.body { padding: 40px 0 80px; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 96px; /* below navbar */
+}
+
+.sidebarCard {
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebarTitle {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.levelNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.levelLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.18s;
+  position: relative;
+}
+
+.levelLink:hover { background: var(--blue-50); }
+
+.levelLinkActive {
+  background: var(--active-light, var(--blue-50)) !important;
+}
+
+.levelDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.levelLinkText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.levelLinkText b { font-size: 13px; font-weight: 800; }
+.levelLinkText small { font-size: 11px; color: var(--muted); }
+
+.activeArrow {
+  font-size: 12px;
+  color: var(--active-color, var(--blue-600));
+  font-weight: 900;
+}
+
+/* Info card */
+.infoCard {
+  background: var(--level-light);
+  border: 1.5px solid var(--level-border);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.infoTitle {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--level-border);
+}
+
+.infoRow:last-child { border-bottom: none; }
+.infoRow span { color: var(--muted); }
+.infoRow strong { font-weight: 800; font-size: 14px; }
+
+/* Main */
+.main { display: flex; flex-direction: column; gap: 20px; }
+
+.mainHeader { display: flex; flex-direction: column; gap: 6px; }
+
+.mainTitle {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: var(--blue-950);
+}
+
+.mainDesc { font-size: 14px; color: var(--muted); }
+
+/* Level navigation */
+.levelNav2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.navBtn {
+  padding: 12px 20px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--blue-800);
+  background: #fff;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.navBtn:hover {
+  background: var(--blue-50);
+  border-color: var(--blue-500);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; flex-direction: row; flex-wrap: wrap; }
+  .sidebarCard { flex: 1; min-width: 200px; }
+  .infoCard { flex: 1; min-width: 200px; }
+}
+
+@media (max-width: 560px) {
+  .sidebar { flex-direction: column; }
+  .body { padding: 28px 0 60px; }
+  .mainTitle { font-size: 20px; }
+}

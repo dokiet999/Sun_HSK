@@ -6,12 +6,14 @@ import com.Kiet.Sun_HSK.enums.HskVersion;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "exams")
+@SQLDelete(sql = "UPDATE exams SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -69,6 +71,9 @@ public class Exam {
 
     @Column(name = "updated_at")
     LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    LocalDateTime deletedAt;
 
     @PrePersist
     void prePersist() {

@@ -1,0 +1,91 @@
+.wrapper { display: flex; flex-direction: column; gap: 20px; }
+
+/* Filter bar */
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 20px;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filterLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pills { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.pill {
+  padding: 6px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: inherit;
+}
+.pill:hover { border-color: var(--blue-400, #60a5fa); }
+.pillActive { color: #fff !important; }
+
+.select {
+  padding: 8px 32px 8px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 12 12'%3E%3Cpath fill='%2360708a' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 10px center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.select:focus { border-color: var(--blue-500); }
+
+.sortGroup { display: flex; align-items: center; gap: 10px; }
+
+.count {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Exam list */
+.list { display: flex; flex-direction: column; gap: 14px; }
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+.emptyIcon { font-size: 48px; margin-bottom: 12px; }
+.empty p { font-size: 15px; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .filterBar { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .count { margin-left: 0; }
+}
+
+@media (max-width: 390px) {
+  .filterBar { padding: 14px 14px; }
+}

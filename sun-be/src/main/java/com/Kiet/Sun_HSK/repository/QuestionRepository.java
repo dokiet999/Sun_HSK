@@ -7,18 +7,21 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, UUID> {
 
-    List<Question> findBySectionIdOrderBySortOrder(UUID sectionId);
+    List<Question> findBySectionIdAndDeletedAtIsNullOrderBySortOrder(UUID sectionId);
 
-    List<Question> findBySectionIdIn(Collection<UUID> sectionIds);
+    List<Question> findBySectionIdInAndDeletedAtIsNull(Collection<UUID> sectionIds);
 
-    @Query("SELECT COUNT(q) FROM Question q WHERE q.section.exam.id = :examId")
+    Optional<Question> findByIdAndDeletedAtIsNull(UUID id);
+
+    @Query("SELECT COUNT(q) FROM Question q WHERE q.section.exam.id = :examId AND q.deletedAt IS NULL")
     long countByExamId(UUID examId);
 
-    @Query("SELECT SUM(q.points) FROM Question q WHERE q.section.exam.id = :examId")
+    @Query("SELECT SUM(q.points) FROM Question q WHERE q.section.exam.id = :examId AND q.deletedAt IS NULL")
     Integer sumPointsByExamId(UUID examId);
 }

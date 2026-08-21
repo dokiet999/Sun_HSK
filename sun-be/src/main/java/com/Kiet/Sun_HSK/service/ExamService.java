@@ -1,15 +1,16 @@
 package com.Kiet.Sun_HSK.service;
 
-import com.Kiet.Sun_HSK.dto.request.CreateExamRequest;
-import com.Kiet.Sun_HSK.dto.request.CreateQuestionOptionRequest;
-import com.Kiet.Sun_HSK.dto.request.CreateQuestionRequest;
-import com.Kiet.Sun_HSK.dto.request.CreateSectionRequest;
+import com.Kiet.Sun_HSK.dto.request.*;
 import com.Kiet.Sun_HSK.dto.response.*;
 import com.Kiet.Sun_HSK.entity.*;
 import com.Kiet.Sun_HSK.enums.AttemptStatus;
 import com.Kiet.Sun_HSK.enums.ExamStatus;
 import com.Kiet.Sun_HSK.exception.AppException;
 import com.Kiet.Sun_HSK.exception.ErrorCode;
+import com.Kiet.Sun_HSK.mapper.ExamMapper;
+import com.Kiet.Sun_HSK.mapper.OptionMapper;
+import com.Kiet.Sun_HSK.mapper.QuestionMapper;
+import com.Kiet.Sun_HSK.mapper.SectionMapper;
 import com.Kiet.Sun_HSK.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +37,19 @@ public class ExamService {
     QuestionOptionRepository optionRepository;
     ExamAttemptRepository attemptRepository;
 
+    ExamMapper examMapper;
+    SectionMapper sectionMapper;
+    QuestionMapper questionMapper;
+    OptionMapper optionMapper;
     // ── User: List & Detail ───────────────────────────────────────────────────
 
     public Page<ExamSummaryResponse> listPublished(Pageable pageable, UUID userId) {
-        return examRepository.findByStatus(ExamStatus.PUBLISHED, pageable)
+        return examRepository.findByDeletedAtIsNullAndStatus(ExamStatus.PUBLISHED, pageable)
                 .map(exam -> toSummary(exam, userId));
     }
 
     public ExamDetailResponse getDetail(UUID examId) {
-        Exam exam = examRepository.findByIdAndStatus(examId, ExamStatus.PUBLISHED)
+        Exam exam = examRepository.findByIdAndDeletedAtIsNullAndStatus(examId, ExamStatus.PUBLISHED)
                 .orElseThrow(() -> new AppException(ErrorCode.EXAM_NOT_FOUND));
         return buildDetail(exam);
     }
@@ -53,16 +58,7 @@ public class ExamService {
 
     @Transactional
     public ExamSummaryResponse createExam(CreateExamRequest req) {
-        Exam exam = Exam.builder()
-                .title(req.getTitle())
-                .description(req.getDescription())
-                .hskVersion(req.getHskVersion())
-                .hskLevel(req.getHskLevel())
-                .examType(req.getExamType())
-                .timeLimit(req.getTimeLimit())
-                .passingScore(req.getPassingScore() != null ? req.getPassingScore() : 60)
-                .status(ExamStatus.DRAFT)
-                .build();
+        Exam exam = examMapper.toExam(req);
         return toSummary(examRepository.save(exam), null);
     }
 
@@ -75,50 +71,61 @@ public class ExamService {
     }
 
     @Transactional
+    public ExamSummaryResponse updateExam(UUID examId, UpdateExamRequest req) {
+        Exam exam = examRepository.findByIdAndDeletedAtIsNull(examId)
+                .orElseThrow(() -> new AppException(ErrorCode.EXAM_NOT_FOUND));
+
+        examMapper.updateExam(req, exam);
+
+        return toSummary(examRepository.save(exam), null);
+    }
+
+    @Transactional
     public void deleteExam(UUID examId) {
-        if (!examRepository.existsById(examId)) {
-            throw new AppException(ErrorCode.EXAM_NOT_FOUND);
-        }
-        examRepository.deleteById(examId);
+        Exam exam = examRepository.findByIdAndDeletedAtIsNull(examId)
+                .orElseThrow(() -> new AppException(ErrorCode.EXAM_NOT_FOUND));
+        examRepository.delete(exam);
     }
 
     // ── Admin: Sections ───────────────────────────────────────────────────────
 
     @Transactional
     public SectionResponse addSection(UUID examId, CreateSectionRequest req) {
-        Exam exam = examRepository.findById(examId)
+        Exam exam = examRepository.findByIdAndDeletedAtIsNull(examId)
                 .orElseThrow(() -> new AppException(ErrorCode.EXAM_NOT_FOUND));
 
-        ExamSection section = ExamSection.builder()
-                .exam(exam)
-                .sectionType(req.getSectionType())
-                .title(req.getTitle())
-                .instructions(req.getInstructions())
-                .timeLimit(req.getTimeLimit())
-                .sortOrder(req.getSortOrder())
-                .build();
+        ExamSection section = sectionMapper.toExamSection(req);
+        section.setExam(exam);
 
         return toSectionResponse(sectionRepository.save(section), List.of());
+    }
+
+    @Transactional
+    public SectionResponse updateSection(UUID sectionId, UpdateSectionRequest req) {
+        ExamSection section = sectionRepository.findByIdAndDeletedAtIsNull(sectionId)
+                .orElseThrow(() -> new AppException(ErrorCode.SECTION_NOT_FOUND));
+
+        sectionMapper.updateSection(req, section);
+
+        return toSectionResponse(sectionRepository.save(section), List.of());
+    }
+
+    @Transactional
+    public void deleteSection(UUID sectionId) {
+        ExamSection section = sectionRepository.findByIdAndDeletedAtIsNull(sectionId)
+                .orElseThrow(() -> new AppException(ErrorCode.SECTION_NOT_FOUND));
+        sectionRepository.delete(section);
     }
 
     // ── Admin: Questions ──────────────────────────────────────────────────────
 
     @Transactional
     public QuestionResponse addQuestion(UUID sectionId, CreateQuestionRequest req) {
-        ExamSection section = sectionRepository.findById(sectionId)
+        ExamSection section = sectionRepository.findByIdAndDeletedAtIsNull(sectionId)
                 .orElseThrow(() -> new AppException(ErrorCode.SECTION_NOT_FOUND));
 
-        Question question = Question.builder()
-                .section(section)
-                .questionType(req.getQuestionType())
-                .content(req.getContent())
-                .audioUrl(req.getAudioUrl())
-                .imageUrl(req.getImageUrl())
-                .points(req.getPoints())
-                .sortOrder(req.getSortOrder())
-                .explanation(req.getExplanation())
-                .correctAnswer(req.getCorrectAnswer())
-                .build();
+        Question question = questionMapper.toQuestion(req);
+        question.setSection(section);
 
         Question saved = questionRepository.save(question);
 
@@ -128,35 +135,71 @@ public class ExamService {
         return toQuestionResponse(saved, List.of());
     }
 
+    @Transactional
+    public QuestionResponse updateQuestion(UUID questionId, UpdateQuestionRequest req) {
+        Question question = questionRepository.findByIdAndDeletedAtIsNull(questionId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+
+        questionMapper.updateQuestion(req, question);
+
+        Question saved = questionRepository.save(question);
+        
+        // Load lại options nếu có để trả về (hoặc tạm trả List.of() để tránh N+1)
+        List<QuestionOption> options = optionRepository.findByQuestionIdInAndDeletedAtIsNull(List.of(saved.getId()));
+        updateExamStats(saved.getSection().getExam().getId());
+
+        return toQuestionResponse(saved, options);
+    }
+
+    @Transactional
+    public void deleteQuestion(UUID questionId) {
+        Question question = questionRepository.findByIdAndDeletedAtIsNull(questionId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+        UUID examId = question.getSection().getExam().getId();
+        questionRepository.delete(question);
+        updateExamStats(examId);
+    }
+
     // ── Admin: Options ────────────────────────────────────────────────────────
 
     @Transactional
     public QuestionOptionResponse addOption(UUID questionId, CreateQuestionOptionRequest req) {
-        Question question = questionRepository.findById(questionId)
+        Question question = questionRepository.findByIdAndDeletedAtIsNull(questionId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
 
-        QuestionOption option = QuestionOption.builder()
-                .question(question)
-                .content(req.getContent())
-                .imageUrl(req.getImageUrl())
-                .isCorrect(req.isCorrect())
-                .matchKey(req.getMatchKey())
-                .sortOrder(req.getSortOrder())
-                .build();
+        QuestionOption option = optionMapper.toQuestionOption(req);
+        option.setQuestion(question);
 
         QuestionOption saved = optionRepository.save(option);
         return toOptionResponse(saved);
     }
 
+    @Transactional
+    public QuestionOptionResponse updateOption(UUID optionId, UpdateQuestionOptionRequest req) {
+        QuestionOption option = optionRepository.findByIdAndDeletedAtIsNull(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND)); // Tạm dùng QUESTION_NOT_FOUND
+
+        optionMapper.updateQuestionOption(req, option);
+
+        return toOptionResponse(optionRepository.save(option));
+    }
+
+    @Transactional
+    public void deleteOption(UUID optionId) {
+        QuestionOption option = optionRepository.findByIdAndDeletedAtIsNull(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+        optionRepository.delete(option);
+    }
+
     // ── Admin: get all exams (including DRAFT) ────────────────────────────────
 
     public Page<ExamSummaryResponse> listAll(Pageable pageable) {
-        return examRepository.findAll(pageable)
+        return examRepository.findByDeletedAtIsNull(pageable)
                 .map(exam -> toSummary(exam, null));
     }
 
     public ExamDetailResponse getDetailAdmin(UUID examId) {
-        Exam exam = examRepository.findById(examId)
+        Exam exam = examRepository.findByIdAndDeletedAtIsNull(examId)
                 .orElseThrow(() -> new AppException(ErrorCode.EXAM_NOT_FOUND));
         return buildDetail(exam);
     }
@@ -166,7 +209,7 @@ public class ExamService {
     private void updateExamStats(UUID examId) {
         long count = questionRepository.countByExamId(examId);
         Integer total = questionRepository.sumPointsByExamId(examId);
-        examRepository.findById(examId).ifPresent(exam -> {
+        examRepository.findByIdAndDeletedAtIsNull(examId).ifPresent(exam -> {
             exam.setTotalQuestions((int) count);
             exam.setTotalPoints(total != null ? total : 0);
             examRepository.save(exam);
@@ -174,13 +217,15 @@ public class ExamService {
     }
 
     private ExamDetailResponse buildDetail(Exam exam) {
-        List<ExamSection> sections = sectionRepository.findByExamIdOrderBySortOrder(exam.getId());
+        List<ExamSection> sections = sectionRepository.findByExamIdAndDeletedAtIsNullOrderBySortOrder(exam.getId());
         List<UUID> sectionIds = sections.stream().map(ExamSection::getId).toList();
-        List<Question> allQuestions = questionRepository.findBySectionIdIn(sectionIds);
+        List<Question> allQuestions = sectionIds.isEmpty()
+                ? List.of()
+                : questionRepository.findBySectionIdInAndDeletedAtIsNull(sectionIds);
         List<UUID> questionIds = allQuestions.stream().map(Question::getId).toList();
         List<QuestionOption> allOptions = questionIds.isEmpty()
                 ? List.of()
-                : optionRepository.findByQuestionIdIn(questionIds);
+                : optionRepository.findByQuestionIdInAndDeletedAtIsNull(questionIds);
 
         List<SectionResponse> sectionResponses = sections.stream()
                 .map(section -> {
@@ -203,19 +248,7 @@ public class ExamService {
                 })
                 .toList();
 
-        return ExamDetailResponse.builder()
-                .id(exam.getId())
-                .title(exam.getTitle())
-                .description(exam.getDescription())
-                .hskVersion(exam.getHskVersion())
-                .hskLevel(exam.getHskLevel())
-                .examType(exam.getExamType())
-                .timeLimit(exam.getTimeLimit())
-                .totalQuestions(exam.getTotalQuestions())
-                .totalPoints(exam.getTotalPoints())
-                .passingScore(exam.getPassingScore())
-                .sections(sectionResponses)
-                .build();
+        return examMapper.toDetail(exam);
     }
 
     private ExamSummaryResponse toSummary(Exam exam, UUID userId) {
@@ -228,55 +261,32 @@ public class ExamService {
                     .orElse(null);
         }
 
-        return ExamSummaryResponse.builder()
-                .id(exam.getId())
-                .title(exam.getTitle())
-                .description(exam.getDescription())
-                .hskVersion(exam.getHskVersion())
-                .hskLevel(exam.getHskLevel())
-                .examType(exam.getExamType())
-                .timeLimit(exam.getTimeLimit())
-                .totalQuestions(exam.getTotalQuestions())
-                .totalPoints(exam.getTotalPoints())
-                .passingScore(exam.getPassingScore())
-                .status(exam.getStatus())
-                .createdAt(exam.getCreatedAt())
-                .bestScorePercent(bestScore)
-                .build();
+        ExamSummaryResponse response = examMapper.toSummary(exam);
+        response.setBestScorePercent(bestScore);
+        return response;
     }
 
     SectionResponse toSectionResponse(ExamSection section, List<QuestionResponse> questions) {
-        return SectionResponse.builder()
-                .id(section.getId())
-                .sectionType(section.getSectionType())
-                .title(section.getTitle())
-                .instructions(section.getInstructions())
-                .timeLimit(section.getTimeLimit())
-                .sortOrder(section.getSortOrder())
-                .questions(questions)
-                .build();
+        SectionResponse response = sectionMapper.toSectionResponse(section);
+        response.setQuestions(questions);
+        return response;
+
     }
 
     QuestionResponse toQuestionResponse(Question q, List<QuestionOption> opts) {
-        return QuestionResponse.builder()
-                .id(q.getId())
-                .questionType(q.getQuestionType())
-                .content(q.getContent())
-                .audioUrl(q.getAudioUrl())
-                .imageUrl(q.getImageUrl())
-                .points(q.getPoints())
-                .sortOrder(q.getSortOrder())
-                .options(opts.stream().map(this::toOptionResponse).collect(Collectors.toList()))
-                .build();
+        QuestionResponse response =
+                questionMapper.toQuestionResponse(q);
+
+        response.setOptions(
+                opts.stream()
+                        .map(questionMapper::toOptionResponse)
+                        .toList()
+        );
+
+        return response;
     }
 
     QuestionOptionResponse toOptionResponse(QuestionOption o) {
-        return QuestionOptionResponse.builder()
-                .id(o.getId())
-                .content(o.getContent())
-                .imageUrl(o.getImageUrl())
-                .matchKey(o.getMatchKey())
-                .sortOrder(o.getSortOrder())
-                .build();
+        return questionMapper.toOptionResponse(o);
     }
 }

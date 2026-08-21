@@ -1,0 +1,5 @@
+export { default as HeroSection }     from './components/HeroSection.jsx'
+export { default as FeaturesSection } from './components/FeaturesSection.jsx'
+export { default as LevelsSection }   from './components/LevelsSection.jsx'
+export { default as StudySection }    from './components/StudySection.jsx'
+export { default as CTASection }      from './components/CTASection.jsx'

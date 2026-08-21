@@ -1,0 +1,38 @@
+.promo {
+  background: linear-gradient(90deg, var(--blue-950), var(--blue-700));
+  color: #fff;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pill {
+  background: #fff;
+  color: var(--blue-800);
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 650px) {
+  .inner { font-size: 12px; gap: 8px; padding: 4px 0; }
+  .promo { min-height: 48px; }
+}
+
+@media (max-width: 390px) {
+  .pill { display: none; }
+  .inner { font-size: 11px; }
+}

@@ -1,0 +1,133 @@
+.card {
+  position: absolute;
+  inset: 15px 5px 10px 30px;
+  border-radius: 34px;
+  background: linear-gradient(145deg, #0b3d91, #2187f4);
+  box-shadow: 0 30px 70px rgba(13, 72, 151, 0.25);
+  padding: 30px;
+  color: #fff;
+  overflow: hidden;
+}
+
+.blob1,
+.blob2 {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.blob1 { width: 300px; height: 300px; right: -110px; top: -90px; }
+.blob2 { width: 220px; height: 220px; left: -90px; bottom: -110px; }
+
+.dashboard {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  padding: 20px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.miniLabel {
+  font-size: 12px;
+  opacity: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.level {
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.hanzi {
+  font-size: 38px;
+  line-height: 1;
+}
+
+.progressBar {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  background: #fff;
+  border-radius: 99px;
+  transition: width 1s ease;
+}
+
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.score {
+  background: #fff;
+  color: var(--text);
+  border-radius: 17px;
+  padding: 16px;
+}
+
+.score strong {
+  display: block;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--blue-800);
+}
+
+.score small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 650px) {
+  .card {
+    inset: 10px 0 8px 10px;
+    padding: 18px;
+    border-radius: 24px;
+  }
+
+  .dashboard {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .level { font-size: 20px; }
+  .hanzi { font-size: 28px; }
+
+  .scoreGrid { gap: 8px; margin-top: 12px; }
+
+  .score {
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .score strong { font-size: 18px; }
+}
+
+@media (max-width: 390px) {
+  .card {
+    inset: 8px 0 6px 6px;
+    padding: 14px;
+  }
+
+  .score strong { font-size: 16px; }
+  .scoreGrid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .score { padding: 8px 6px; text-align: center; border-radius: 10px; }
+}

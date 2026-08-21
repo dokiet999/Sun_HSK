@@ -4,11 +4,14 @@ import com.Kiet.Sun_HSK.enums.SectionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "exam_sections")
+@SQLDelete(sql = "UPDATE exam_sections SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -42,4 +45,7 @@ public class ExamSection {
     @Builder.Default
     @Column(name = "sort_order", nullable = false)
     int sortOrder = 0;
+
+    @Column(name = "deleted_at")
+    LocalDateTime deletedAt;
 }
