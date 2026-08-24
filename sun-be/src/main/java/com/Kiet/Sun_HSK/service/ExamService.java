@@ -248,7 +248,9 @@ public class ExamService {
                 })
                 .toList();
 
-        return examMapper.toDetail(exam);
+        ExamDetailResponse response = examMapper.toDetail(exam);
+        response.setSections(sectionResponses);
+        return response;
     }
 
     private ExamSummaryResponse toSummary(Exam exam, UUID userId) {
