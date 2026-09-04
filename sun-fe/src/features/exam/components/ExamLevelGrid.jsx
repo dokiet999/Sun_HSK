@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { hskLevels } from '../../../data/examData'
 import styles from './ExamLevelGrid.module.css'
 
-export default function ExamLevelGrid() {
+export default function ExamLevelGrid({ exams = [] }) {
   const navigate = useNavigate()
 
   return (
@@ -32,7 +32,7 @@ export default function ExamLevelGrid() {
               <b>{level.vocab.toLocaleString()}</b> từ vựng
             </span>
             <span className={styles.stat}>
-              <b>{level.examCount}</b> đề thi
+              <b>{exams.filter(e => e.hskLevel === level.id).length}</b> đề thi
             </span>
           </div>
 

@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react'
 import { useParams, Navigate, Link } from 'react-router-dom'
 import PageContainer from '../layouts/PageContainer'
 import { ExamHero, ExamList } from '../features/exam'
-import { hskLevels, examsByLevel } from '../data/examData'
+import { hskLevels } from '../data/examData'
+import { examService } from '../services/examService'
 import styles from './HskLevelExams.module.css'
 
 export default function HskLevelExams() {
@@ -9,9 +11,29 @@ export default function HskLevelExams() {
   const levelId = parseInt(levelParam, 10)
 
   const level = hskLevels.find((l) => l.id === levelId)
-  if (!level) return <Navigate to="/hsk-tests" replace />
+  
+  const [exams, setExams] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const exams = examsByLevel[levelId] ?? []
+  useEffect(() => {
+    async function fetchExams() {
+      try {
+        const data = await examService.listExams({ size: 100 })
+        if (data && data.result && data.result.content) {
+          // Filter exams by the current level
+          const filtered = data.result.content.filter(exam => exam.hskLevel === levelId)
+          setExams(filtered)
+        }
+      } catch (err) {
+        console.error('Failed to fetch exams', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchExams()
+  }, [levelId])
+
+  if (!level) return <Navigate to="/hsk-tests" replace />
 
   // Next / Prev level for quick navigation
   const prevLevel = hskLevels.find((l) => l.id === levelId - 1)
@@ -82,11 +104,17 @@ export default function HskLevelExams() {
                   <span style={{ color: level.color }}>{level.label}</span>
                 </h2>
                 <p className={styles.mainDesc}>
-                  {exams.length} đề thi · Lọc và sắp xếp theo nhu cầu của bạn.
+                  {loading ? 'Đang tải...' : `${exams.length} đề thi`} · Lọc và sắp xếp theo nhu cầu của bạn.
                 </p>
               </div>
 
-              <ExamList exams={exams} levelColor={level.color} />
+              {loading ? (
+                <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Đang tải danh sách đề thi...</div>
+              ) : exams.length === 0 ? (
+                <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Chưa có đề thi nào cho cấp độ này.</div>
+              ) : (
+                <ExamList exams={exams} levelColor={level.color} />
+              )}
 
               {/* Level navigation */}
               <div className={styles.levelNav2}>

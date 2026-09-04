@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import styles from './ExamCard.module.css'
 
 const difficultyMeta = {
@@ -7,7 +8,9 @@ const difficultyMeta = {
 }
 
 export default function ExamCard({ exam, levelColor, onStart }) {
+  const navigate = useNavigate()
   const diff = difficultyMeta[exam.difficulty] || difficultyMeta['Trung bình']
+  const hasAttempt = exam.bestScorePercent !== null && exam.bestScorePercent !== undefined
 
   return (
     <article className={styles.card}>
@@ -22,11 +25,11 @@ export default function ExamCard({ exam, levelColor, onStart }) {
             {diff.label}
           </span>
         </div>
-        <span className={styles.type}>{exam.type} · {exam.year}</span>
+        <span className={styles.type}>{exam.examType || exam.type || 'MOCK'} · {exam.createdAt ? new Date(exam.createdAt).getFullYear() : '2026'}</span>
       </div>
 
       {/* Tags */}
-      {exam.tags.length > 0 && (
+      {(exam.tags && exam.tags.length > 0) && (
         <div className={styles.tags}>
           {exam.tags.map((t) => (
             <span key={t} className={styles.tag}
@@ -41,19 +44,19 @@ export default function ExamCard({ exam, levelColor, onStart }) {
       <div className={styles.stats}>
         <span className={styles.stat}>
           <span className={styles.statIcon}>📝</span>
-          {exam.questions ?? '—'} câu
+          {exam.totalQuestions ?? exam.questions ?? '—'} câu
         </span>
         <span className={styles.stat}>
           <span className={styles.statIcon}>⏱</span>
-          {exam.duration ?? '—'} phút
+          {exam.timeLimit ?? exam.duration ?? '—'} phút
         </span>
         <span className={styles.stat}>
           <span className={styles.statIcon}>👤</span>
-          {exam.attempts.toLocaleString()} lượt làm
+          {(exam.attempts || 0).toLocaleString()} lượt
         </span>
         <span className={styles.stat}>
           <span className={styles.statIcon}>⭐</span>
-          {exam.rating}
+          {exam.rating || '5.0'}
         </span>
       </div>
 
@@ -66,7 +69,23 @@ export default function ExamCard({ exam, levelColor, onStart }) {
         >
           Làm bài →
         </button>
-        <button className={styles.previewBtn}>Xem trước</button>
+        <button 
+          className={styles.previewBtn}
+          onClick={() => navigate(`/hsk-tests/intro/${exam.id}`)}
+        >
+          Xem trước
+        </button>
+        <button
+          className={`${styles.historyBtn} ${!hasAttempt ? styles.historyBtnDisabled : ''}`}
+          disabled={!hasAttempt}
+          title={hasAttempt ? `Điểm cao nhất: ${exam.bestScorePercent}%` : 'Bạn chưa làm bài thi này'}
+          onClick={() => hasAttempt && navigate(`/history?examId=${exam.id}`)}
+        >
+          📚 Lịch sử
+          {hasAttempt && (
+            <span className={styles.historyScore}>{Number(exam.bestScorePercent).toFixed(0)}%</span>
+          )}
+        </button>
       </div>
     </article>
   )

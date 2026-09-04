@@ -116,3 +116,18 @@ logs/
 *.seed
 *.pid.lock
 .report/
+
+# --------------------------------------------------------------------
+# 7. AI Agents & IDE Tooling
+# --------------------------------------------------------------------
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.impeccable/
+**/.impeccable/
+sun-fe/*.cjs
+test-*.json
+test_*.py
+scratch_*.py

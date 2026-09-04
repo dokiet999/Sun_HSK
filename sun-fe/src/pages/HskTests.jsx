@@ -1,17 +1,34 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import PageContainer from '../layouts/PageContainer'
 import { ExamLevelGrid } from '../features/exam'
 import { hskLevels } from '../data/examData'
+import { examService } from '../services/examService'
 import styles from './HskTests.module.css'
 
-const stats = [
-  { icon: '📋', value: `${hskLevels.reduce((s, l) => s + l.examCount, 0)}+`, label: 'Đề thi' },
-  { icon: '🎯', value: '6',       label: 'Cấp độ HSK' },
-  { icon: '👤', value: '10K+',   label: 'Học viên' },
-  { icon: '⭐', value: '4.8',    label: 'Đánh giá TB' },
-]
-
 export default function HskTests() {
+  const [exams, setExams] = useState([])
+  
+  useEffect(() => {
+    async function fetchExams() {
+      try {
+        const data = await examService.listExams({ size: 500 }) // Fetch all
+        if (data?.result?.content) {
+          setExams(data.result.content)
+        }
+      } catch (err) {
+        console.error('Failed to fetch exams', err)
+      }
+    }
+    fetchExams()
+  }, [])
+
+  const stats = [
+    { icon: '📋', value: `${exams.length}+`, label: 'Đề thi' },
+    { icon: '🎯', value: '6',       label: 'Cấp độ HSK' },
+    { icon: '👤', value: '10K+',   label: 'Học viên' },
+    { icon: '⭐', value: '4.8',    label: 'Đánh giá TB' },
+  ]
   return (
     <PageContainer>
       {/* Page hero */}
@@ -44,7 +61,7 @@ export default function HskTests() {
             <h2>Chọn cấp độ HSK</h2>
             <p>Mỗi cấp độ có đề thi riêng với cấu trúc và từ vựng phù hợp.</p>
           </div>
-          <ExamLevelGrid />
+          <ExamLevelGrid exams={exams} />
         </div>
       </section>
 

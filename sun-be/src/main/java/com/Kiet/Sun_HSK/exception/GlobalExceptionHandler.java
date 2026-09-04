@@ -90,11 +90,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneral(Exception ex) {
         log.error("Unhandled exception", ex);
+        // TODO: Xoa dong debug nay khi deploy production
+        String debugMsg = ex.getClass().getSimpleName() + ": " + ex.getMessage();
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.<Void>builder()
                         .code(500)
-                        .message(ErrorCode.INTERNAL_ERROR.getMessage())
+                        .message(debugMsg)
                         .build());
     }
 }

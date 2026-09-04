@@ -1,5 +1,6 @@
 package com.Kiet.Sun_HSK.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -36,6 +37,7 @@ public class QuestionOption {
 
     @Builder.Default
     @Column(name = "is_correct", nullable = false)
+    @JsonProperty("isCorrect")
     boolean isCorrect = false;
 
     /**

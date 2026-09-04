@@ -29,6 +29,7 @@ public enum ErrorCode {
     // ── Attempt ───────────────────────────────────────────────────────────────
     ATTEMPT_NOT_FOUND(404, "Không tìm thấy lần làm bài"),
     ATTEMPT_ALREADY_SUBMITTED(400, "Bài thi đã được nộp"),
+    ATTEMPT_NOT_SUBMITTED(400, "Bài thi chưa được nộp"),
     ATTEMPT_EXPIRED(400, "Đã hết thời gian làm bài"),
 
     // ── Authorization ─────────────────────────────────────────────────────────

@@ -193,7 +193,7 @@ public class AdminExamController {
     @PutMapping("/options/{optionId}")
     public ResponseEntity<ApiResponse<QuestionOptionResponse>> updateOption(
             @PathVariable UUID optionId,
-            @Valid @RequestBody UpdateQuestionOptionRequest request
+            @Valid @RequestBody     UpdateQuestionOptionRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.success("Cập nhật lựa chọn thành công",
                 examService.updateOption(optionId, request)));

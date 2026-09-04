@@ -151,3 +151,70 @@
   .actions > *:nth-child(4) { display: none; }
   .iconBtn { width: 36px; height: 36px; font-size: 16px; }
 }
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: 8px;
+}
+
+.avatarWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--blue-900);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.userName {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--blue-900);
+}
+
+.logoutBtn {
+  background: #f1f5f9;
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #34435a;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.logoutBtn:hover {
+  background: #ffe4e6;
+  color: #e11d48;
+  border-color: #fecdd3;
+}
+
+.historyBtn {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.historyBtn:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}

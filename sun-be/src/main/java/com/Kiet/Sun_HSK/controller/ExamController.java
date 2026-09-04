@@ -43,8 +43,8 @@ public class ExamController {
             @PageableDefault(size = 10, sort = "createdAt") Pageable pageable,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        UUID userId = null; // TODO: resolve userId from email nếu cần
-        Page<ExamSummaryResponse> exams = examService.listPublished(pageable, userId);
+        String email = (userDetails != null) ? userDetails.getUsername() : null;
+        Page<ExamSummaryResponse> exams = examService.listPublished(pageable, email);
         return ResponseEntity.ok(ApiResponse.success(exams));
     }
 

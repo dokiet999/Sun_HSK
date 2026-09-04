@@ -15,6 +15,16 @@
   --white:    #fff;
   --shadow:   0 18px 50px rgba(16, 70, 140, 0.12);
   --radius:   22px;
+  --danger: #e5484d;
+  --danger-bg: #fff7f7;
+  --danger-border: #ffd1d1;
+  --success: #18a66b;
+  --success-hover: #138a58;
+  --success-bg: #e9f8f1;
+  --success-border: #a9dec8;
+  --success-text: #147b50;
+  --bg-secondary: #f0f2f5;
+
 }
 
 *, *::before, *::after { box-sizing: border-box; }

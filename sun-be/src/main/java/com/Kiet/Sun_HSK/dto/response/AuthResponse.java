@@ -16,6 +16,8 @@ public class AuthResponse {
      */
     String accessToken;
 
+    String refreshToken;
+
     @Builder.Default
     String tokenType = "Bearer";
 

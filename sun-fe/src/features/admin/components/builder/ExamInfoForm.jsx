@@ -8,7 +8,7 @@ export default function ExamInfoForm({ exam, onCreated, onUpdated }) {
     description: '',
     hskVersion: 'HSK_3',
     hskLevel: 3,
-    examType: 'MOCK',
+    examType: 'MOCK_EXAM',
     timeLimit: 90,
     passingScore: 60
   })
@@ -21,7 +21,7 @@ export default function ExamInfoForm({ exam, onCreated, onUpdated }) {
         description: exam.description || '',
         hskVersion: exam.hskVersion || 'HSK_3',
         hskLevel: exam.hskLevel || 3,
-        examType: exam.examType || 'MOCK',
+        examType: exam.examType || 'MOCK_EXAM',
         timeLimit: exam.timeLimit || 90,
         passingScore: exam.passingScore || 60
       })
@@ -83,7 +83,7 @@ export default function ExamInfoForm({ exam, onCreated, onUpdated }) {
         <div className={styles.formGroup}>
           <label className={styles.label}>Loại đề</label>
           <select className={styles.select} name="examType" value={form.examType} onChange={handleChange}>
-            <option value="MOCK">Thi thử (MOCK)</option>
+            <option value="MOCK_EXAM">Thi thử (MOCK_EXAM)</option>
             <option value="REAL">Đề thật (REAL)</option>
             <option value="PRACTICE">Luyện tập (PRACTICE)</option>
           </select>

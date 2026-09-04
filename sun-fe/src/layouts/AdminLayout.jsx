@@ -43,11 +43,13 @@ export default function AdminLayout({ children }) {
               key={item.to}
               to={item.to}
               end={item.end}
+              aria-label={item.label}
+              title={collapsed ? item.label : undefined}
               className={({ isActive }) =>
                 `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
               }
             >
-              <span className={styles.navIcon}>{item.icon}</span>
+              <span className={styles.navIcon} aria-hidden="true">{item.icon}</span>
               {!collapsed && <span className={styles.navLabel}>{item.label}</span>}
             </NavLink>
           ))}
@@ -58,8 +60,9 @@ export default function AdminLayout({ children }) {
           <button
             className={styles.backBtn}
             onClick={() => navigate('/')}
+            aria-label="Về trang chủ"
           >
-            <span>🏠</span>
+            <span aria-hidden="true">🏠</span>
             {!collapsed && <span>Về trang chủ</span>}
           </button>
         </div>

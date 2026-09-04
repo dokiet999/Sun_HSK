@@ -24,6 +24,10 @@ export default function LoginForm() {
       const data = await authService.login(form.email, form.password)
       if (data && data.result && data.result.accessToken) {
         localStorage.setItem('token', data.result.accessToken)
+        if (data.result.refreshToken) {
+          localStorage.setItem('refreshToken', data.result.refreshToken)
+        }
+        localStorage.setItem('user', JSON.stringify(data.result.user))
         
         // Kiểm tra role để chuyển hướng
         if (data.result.user && data.result.user.role === 'ADMIN') {
@@ -91,9 +95,6 @@ export default function LoginForm() {
             <div className={styles.field}>
               <label htmlFor="login-password" className={styles.label}>
                 Mật khẩu
-                <Link to="/forgot-password" className={`${styles.link} ${styles.forgot}`}>
-                  Quên mật khẩu?
-                </Link>
               </label>
               <input
                 id="login-password"
@@ -105,6 +106,11 @@ export default function LoginForm() {
                 className={styles.input}
                 autoComplete="current-password"
               />
+              <div className={styles.forgotContainer}>
+                <Link to="/forgot-password" className={`${styles.link} ${styles.forgot}`}>
+                  Quên mật khẩu?
+                </Link>
+              </div>
             </div>
 
             <Button type="submit" variant="primary" className={styles.submitBtn}>

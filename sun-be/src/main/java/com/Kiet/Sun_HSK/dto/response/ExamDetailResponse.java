@@ -10,8 +10,12 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
+
 /** Trả về khi user vào xem đề thi — có đầy đủ câu hỏi nhưng KHÔNG có đáp án */
 @Getter
+@Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ExamDetailResponse {

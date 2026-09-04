@@ -167,6 +167,12 @@
 
 .forgot { font-weight: 600; font-size: 12px; }
 
+.forgotContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -2px;
+}
+
 .input {
   width: 100%;
   padding: 14px 16px;

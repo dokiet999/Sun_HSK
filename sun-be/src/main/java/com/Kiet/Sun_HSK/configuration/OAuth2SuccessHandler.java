@@ -61,9 +61,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(false) // TODO: true trên production HTTPS
-                .path("/api/v1/auth")
+                .path("/")
                 .maxAge(Duration.ofMillis(refreshTokenExpiration))
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 

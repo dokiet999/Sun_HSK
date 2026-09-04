@@ -230,3 +230,9 @@
   .topbar { padding: 0 16px; }
   .content { padding: 16px; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .liveDot {
+    animation: none;
+  }
+}

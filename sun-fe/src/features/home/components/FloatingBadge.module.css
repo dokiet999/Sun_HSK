@@ -30,6 +30,12 @@
   50%       { transform: translateY(-8px); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .badge {
+    animation: none;
+  }
+}
+
 @media (max-width: 650px) {
   .badge {
     font-size: 11px;

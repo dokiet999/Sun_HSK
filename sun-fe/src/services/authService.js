@@ -21,9 +21,27 @@ export const authService = {
   },
 
   /**
-   * Đăng xuất (xóa token)
+   * Gọi API refresh token
+   * @param {string} [refreshToken]
    */
-  logout: () => {
-    localStorage.removeItem('token');
+  refreshToken: async (refreshToken) => {
+    const token = refreshToken || localStorage.getItem('refreshToken');
+    const response = await api.post('/api/v1/auth/refresh', { refreshToken: token });
+    return response.data;
+  },
+
+  /**
+   * Đăng xuất (xóa token local và gọi server logout)
+   */
+  logout: async () => {
+    try {
+      await api.post('/api/v1/auth/logout');
+    } catch (e) {
+      // Bỏ qua lỗi mạng khi logout
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+    }
   },
 };

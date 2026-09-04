@@ -36,6 +36,7 @@ public class ExamService {
     QuestionRepository questionRepository;
     QuestionOptionRepository optionRepository;
     ExamAttemptRepository attemptRepository;
+    UserRepository userRepository;
 
     ExamMapper examMapper;
     SectionMapper sectionMapper;
@@ -43,9 +44,16 @@ public class ExamService {
     OptionMapper optionMapper;
     // ── User: List & Detail ───────────────────────────────────────────────────
 
-    public Page<ExamSummaryResponse> listPublished(Pageable pageable, UUID userId) {
+    public Page<ExamSummaryResponse> listPublished(Pageable pageable, String email) {
+        UUID userId = null;
+        if (email != null) {
+            userId = userRepository.findByEmail(email)
+                    .map(User::getId)
+                    .orElse(null);
+        }
+        final UUID finalUserId = userId;
         return examRepository.findByDeletedAtIsNullAndStatus(ExamStatus.PUBLISHED, pageable)
-                .map(exam -> toSummary(exam, userId));
+                .map(exam -> toSummary(exam, finalUserId));
     }
 
     public ExamDetailResponse getDetail(UUID examId) {
@@ -143,7 +151,7 @@ public class ExamService {
         questionMapper.updateQuestion(req, question);
 
         Question saved = questionRepository.save(question);
-        
+
         // Load lại options nếu có để trả về (hoặc tạm trả List.of() để tránh N+1)
         List<QuestionOption> options = optionRepository.findByQuestionIdInAndDeletedAtIsNull(List.of(saved.getId()));
         updateExamStats(saved.getSection().getExam().getId());

@@ -1,12 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import { navLinks } from '../data/homeData'
+import { authService } from '../services/authService'
 import styles from './Navbar.module.css'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (e) {
+        // Handle invalid JSON
+      }
+    }
+  }, [])
+
+  const handleLogout = () => {
+    authService.logout()
+    setUser(null)
+    navigate('/')
+  }
 
   return (
     <header className={styles.header}>
@@ -51,13 +70,25 @@ export default function Navbar() {
           >
             {menuOpen ? '✕' : '☰'}
           </button>
-          <button className={styles.iconBtn} aria-label="Tìm kiếm">⌕</button>
-          <Button variant="outline" onClick={() => navigate('/login')}>
-            Đăng nhập
-          </Button>
-          <Button variant="primary" onClick={() => navigate('/signup')}>
-            Đăng ký
-          </Button>
+          
+          {user ? (
+            <div className={styles.userMenu}>
+              <div className={styles.avatarWrap}>
+                <div className={styles.avatar}>{user.email?.charAt(0).toUpperCase()}</div>
+                <span className={styles.userName}>{user.username || user.email?.split('@')[0]}</span>
+              </div>
+              <button className={styles.logoutBtn} onClick={handleLogout}>Đăng xuất</button>
+            </div>
+          ) : (
+            <>
+              <Button variant="outline" onClick={() => navigate('/login')}>
+                Đăng nhập
+              </Button>
+              <Button variant="primary" onClick={() => navigate('/signup')}>
+                Đăng ký
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

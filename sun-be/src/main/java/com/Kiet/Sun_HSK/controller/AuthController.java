@@ -2,6 +2,7 @@ package com.Kiet.Sun_HSK.controller;
 
 import com.Kiet.Sun_HSK.common.ApiResponse;
 import com.Kiet.Sun_HSK.dto.request.LoginRequest;
+import com.Kiet.Sun_HSK.dto.request.RefreshTokenRequest;
 import com.Kiet.Sun_HSK.dto.request.RegisterRequest;
 import com.Kiet.Sun_HSK.dto.response.AuthResponse;
 import com.Kiet.Sun_HSK.service.AuthService;
@@ -53,14 +54,19 @@ public class AuthController {
 
     /**
      * POST /api/v1/auth/refresh
-     * Làm mới Access Token bằng Refresh Token (đọc từ HttpOnly cookie).
+     * Làm mới Access Token bằng Refresh Token (đọc từ HttpOnly cookie hoặc request body).
      */
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<AuthResponse>> refresh(
-            @CookieValue(name = "refreshToken", required = false) String refreshToken,
+            @CookieValue(name = "refreshToken", required = false) String cookieRefreshToken,
+            @RequestBody(required = false) RefreshTokenRequest requestBody,
             HttpServletResponse response
     ) {
-        AuthResponse authResponse = authService.refreshToken(refreshToken, response);
+        String token = (requestBody != null && requestBody.getRefreshToken() != null && !requestBody.getRefreshToken().isBlank())
+                ? requestBody.getRefreshToken()
+                : cookieRefreshToken;
+
+        AuthResponse authResponse = authService.refreshToken(token, response);
         return ResponseEntity.ok(ApiResponse.success("Token đã được làm mới", authResponse));
     }
 

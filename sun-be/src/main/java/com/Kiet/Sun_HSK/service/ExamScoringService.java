@@ -118,8 +118,9 @@ public class ExamScoringService {
                             QuestionOption::getMatchKey
                     ));
 
-            // Đúng toàn bộ mới cho điểm (strict matching)
+            // Đúng toàn bộ mới cho điểm: phải khớp chính xác cả key lẫn số lượng cặp.
             boolean allCorrect = !correctPairs.isEmpty()
+                    && userPairs.size() == correctPairs.size()
                     && correctPairs.entrySet().stream()
                     .allMatch(e -> e.getValue().equals(userPairs.get(e.getKey())));
 
@@ -150,7 +151,7 @@ public class ExamScoringService {
                     .map(o -> o.getId().toString())
                     .toList();
 
-            boolean isCorrect = userOrder.equals(correctOrder);
+            boolean isCorrect = !correctOrder.isEmpty() && userOrder.equals(correctOrder);
             answer.setIsCorrect(isCorrect);
             answer.setPointsEarned(isCorrect ? question.getPoints() : 0);
         } catch (JsonProcessingException e) {

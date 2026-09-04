@@ -119,10 +119,10 @@ public class AuthService {
         // Xoá refresh token cookie bằng cách set maxAge = 0
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(true)
-                .path("/api/v1/auth")
+                .secure(false)
+                .path("/")
                 .maxAge(0)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         log.debug("Refresh token cookie cleared");
@@ -173,9 +173,9 @@ public class AuthService {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(false) // TODO: set true khi deploy HTTPS trên production
-                .path("/api/v1/auth")
+                .path("/")
                 .maxAge(Duration.ofMillis(refreshTokenExpiration))
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
@@ -183,6 +183,7 @@ public class AuthService {
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .user(userResponse)
                 .build();
     }

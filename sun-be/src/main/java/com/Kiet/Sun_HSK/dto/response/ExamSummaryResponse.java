@@ -4,18 +4,19 @@ import com.Kiet.Sun_HSK.enums.ExamStatus;
 import com.Kiet.Sun_HSK.enums.ExamType;
 import com.Kiet.Sun_HSK.enums.HskVersion;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
+@Setter
 @Builder
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class ExamSummaryResponse {
 
     UUID id;

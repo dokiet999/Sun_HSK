@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { difficultyOptions, typeOptions } from '../../../data/examData'
 import ExamCard from './ExamCard'
 import styles from './ExamList.module.css'
 
 export default function ExamList({ exams, levelColor }) {
+  const navigate = useNavigate()
   const [difficulty, setDifficulty] = useState('Tất cả')
   const [type, setType]             = useState('Tất cả')
   const [sort, setSort]             = useState('popular') // popular | rating | newest
@@ -19,7 +21,7 @@ export default function ExamList({ exams, levelColor }) {
   }, [exams, difficulty, type, sort])
 
   function handleStart(exam) {
-    alert(`Sắp triển khai: Bắt đầu "${exam.title}"`)
+    navigate(`/hsk-tests/intro/${exam.id}`)
   }
 
   return (

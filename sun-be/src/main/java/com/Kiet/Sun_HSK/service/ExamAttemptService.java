@@ -144,7 +144,7 @@ public class ExamAttemptService {
             for (AnswerItemRequest answerReq : req.getAnswers()) {
                 if (answerReq.getQuestionId() == null) continue;
                 Question q = questionMap.get(answerReq.getQuestionId());
-                if (q == null) throw new AppException(ErrorCode.QUESTION_NOT_FOUND);
+                if (q == null) continue; // bỏ qua questionId không thuộc đề thi này
                 validateSelectedOption(q, answerReq.getSelectedOptionId(),
                         optionsByQuestion.getOrDefault(q.getId(), List.of()));
                 AttemptAnswer answer = answerByQuestion.computeIfAbsent(q.getId(),
@@ -215,7 +215,7 @@ public class ExamAttemptService {
     }
 
     // ── Xem kết quả ───────────────────────────────────────────────────────────
-
+    @Transactional(readOnly = true)
     public AttemptResultResponse getResult(UUID attemptId, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -245,6 +245,7 @@ public class ExamAttemptService {
 
     // ── Lịch sử làm bài ──────────────────────────────────────────────────────
 
+    @Transactional(readOnly = true)
     public Page<AttemptHistoryResponse> getHistory(String userEmail, Pageable pageable) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -268,8 +269,12 @@ public class ExamAttemptService {
             throw new AppException(ErrorCode.ATTEMPT_EXPIRED);
         }
 
+        // Cho phép grace period 30 giây sau khi hết giờ để bù đắp độ trễ mạng
+        // và race condition giữa timer frontend và server clock.
+        // Nếu đã quá grace period → mới thực sự từ chối.
+        final int GRACE_SECONDS = 30;
         if (attempt.getExpiresAt() != null
-                && LocalDateTime.now().isAfter(attempt.getExpiresAt())) {
+                && LocalDateTime.now().isAfter(attempt.getExpiresAt().plusSeconds(GRACE_SECONDS))) {
             expireAttempt(attemptId);
             throw new AppException(ErrorCode.ATTEMPT_EXPIRED);
         }

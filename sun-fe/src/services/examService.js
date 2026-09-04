@@ -2,6 +2,15 @@ import api from '../lib/axios';
 
 export const examService = {
   /**
+   * Lấy danh sách đề thi (đã published)
+   * GET /api/v1/exams
+   */
+  listExams: async (params = {}) => {
+    const response = await api.get('/api/v1/exams', { params });
+    return response.data;
+  },
+
+  /**
    * Lấy chi tiết đề thi (không bao gồm đáp án đúng)
    * GET /api/v1/exams/{id}
    */
@@ -23,11 +32,12 @@ export const examService = {
    * Lưu câu trả lời realtime
    * POST /api/v1/exams/attempts/{attemptId}/answers
    */
-  saveAnswer: async (attemptId, questionId, optionId, answerText = null) => {
+  saveAnswer: async (attemptId, questionId, selectedOptionId, textAnswer = null, orderAnswer = null) => {
     const response = await api.post(`/api/v1/exams/attempts/${attemptId}/answers`, {
       questionId,
-      optionId,
-      answerText
+      selectedOptionId,
+      textAnswer,
+      orderAnswer
     });
     return response.data;
   },
@@ -48,5 +58,14 @@ export const examService = {
   getResult: async (attemptId) => {
     const response = await api.get(`/api/v1/exams/attempts/${attemptId}/result`);
     return response.data;
-  }
+  },
+
+  /**
+   * Xem lịch sử làm bài của user
+   * GET /api/v1/exams/attempts/history
+   */
+  getHistory: async (page = 0, size = 10) => {
+    const response = await api.get(`/api/v1/exams/attempts/history?page=${page}&size=${size}`);
+    return response.data;
+  },
 };

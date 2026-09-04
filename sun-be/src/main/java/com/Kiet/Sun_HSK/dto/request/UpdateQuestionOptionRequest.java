@@ -1,5 +1,7 @@
 package com.Kiet.Sun_HSK.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -12,6 +14,7 @@ public class UpdateQuestionOptionRequest {
 
     String imageUrl;
 
+    @JsonProperty("isCorrect")
     Boolean isCorrect;
 
     String matchKey;
