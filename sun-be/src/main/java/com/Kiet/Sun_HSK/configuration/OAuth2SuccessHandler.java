@@ -36,6 +36,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Value("${app.jwt.refresh-token-expiration}")
     long refreshTokenExpiration;
 
+    @Value("${app.cookie.secure:false}")
+    boolean cookieSecure = false;
+
+    @Value("${app.cookie.same-site:Lax}")
+    String cookieSameSite = "Lax";
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                          HttpServletResponse response,
@@ -60,10 +66,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // Set Refresh Token vào HttpOnly Cookie
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false) // TODO: true trên production HTTPS
+                .secure(cookieSecure)
                 .path("/")
                 .maxAge(Duration.ofMillis(refreshTokenExpiration))
-                .sameSite("Lax")
+                .sameSite(cookieSameSite)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 

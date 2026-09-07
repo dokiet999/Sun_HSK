@@ -1,0 +1,113 @@
+name: Sun-HSK CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  # ====================================================================
+  # 1. Backend CI: Compile, Migration & Unit Tests
+  # ====================================================================
+  backend-ci:
+    name: Backend CI (Spring Boot 21)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: sunhsk
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password123
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Grant execute permission for mvnw
+        working-directory: sun-be
+        run: chmod +x mvnw
+
+      - name: Build & Run Tests
+        working-directory: sun-be
+        env:
+          DB_URL: jdbc:postgresql://localhost:5433/sunhsk
+          DB_USERNAME: postgres
+          DB_PASSWORD: password123
+          JWT_SECRET: 92dc2d64d37b77c7035a511b25a3b3a822df2d8d95f57a8d24d07341ba0f83fe8c6b4c31ef9f0570fbfcdc185e722eac847af2ea7653ea9f23c796fdadd07058
+          FRONTEND_URL: http://localhost:5173
+          CORS_ORIGINS: http://localhost:5173
+        run: ./mvnw clean test -B
+
+  # ====================================================================
+  # 2. Frontend CI: Lint & Build Check
+  # ====================================================================
+  frontend-ci:
+    name: Frontend CI (React Vite)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: sun-fe/package-lock.json
+
+      - name: Install dependencies
+        working-directory: sun-fe
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: sun-fe
+        env:
+          VITE_API_BASE_URL: https://api-placeholder.onrender.com
+        run: npm run build
+
+  # ====================================================================
+  # 3. Trigger Render Deployment (Chỉ chạy khi push vào main & CI thành công)
+  # ====================================================================
+  deploy-render:
+    name: Trigger Render Deploy Hook
+    needs: [backend-ci, frontend-ci]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Render Deploy Hook
+        env:
+          RENDER_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -n "$RENDER_HOOK" ]; then
+            echo "Triggering Render deployment..."
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$RENDER_HOOK")
+            if [ "$response" -ge 200 ] && [ "$response" -lt 300 ]; then
+              echo "Render deploy successfully triggered (HTTP $response)."
+            else
+              echo "Failed to trigger Render deploy. HTTP response code: $response"
+              exit 1
+            fi
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret is not set yet. Skipping hook trigger."
+            echo "To enable auto-deploy, add RENDER_DEPLOY_HOOK_URL in GitHub Repository Settings -> Secrets."
+          fi

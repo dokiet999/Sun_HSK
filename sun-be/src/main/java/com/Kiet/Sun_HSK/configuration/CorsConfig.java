@@ -23,8 +23,11 @@ public class    CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Parse danh sách origins từ config
-        List<String> origins = Arrays.asList(allowedOriginsStr.split(","));
+        // Parse danh sách origins từ config (trim khoảng trắng để tránh lỗi cấu hình)
+        List<String> origins = Arrays.stream(allowedOriginsStr.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .toList();
         config.setAllowedOrigins(origins);
 
         // Cho phép các HTTP methods cần thiết

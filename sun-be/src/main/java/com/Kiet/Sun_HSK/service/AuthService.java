@@ -43,6 +43,12 @@ public class AuthService {
     @Value("${app.jwt.refresh-token-expiration}")
     long refreshTokenExpiration;
 
+    @Value("${app.cookie.secure:false}")
+    boolean cookieSecure = false;
+
+    @Value("${app.cookie.same-site:Lax}")
+    String cookieSameSite = "Lax";
+
     // ── Register ──────────────────────────────────────────────────────────────
 
     @Transactional
@@ -119,10 +125,10 @@ public class AuthService {
         // Xoá refresh token cookie bằng cách set maxAge = 0
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(cookieSecure)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite(cookieSameSite)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         log.debug("Refresh token cookie cleared");
@@ -172,10 +178,10 @@ public class AuthService {
         // Set Refresh Token vào HttpOnly Cookie
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false) // TODO: set true khi deploy HTTPS trên production
+                .secure(cookieSecure)
                 .path("/")
                 .maxAge(Duration.ofMillis(refreshTokenExpiration))
-                .sameSite("Lax")
+                .sameSite(cookieSameSite)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
