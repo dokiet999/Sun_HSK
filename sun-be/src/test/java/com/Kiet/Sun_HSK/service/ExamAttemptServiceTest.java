@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -163,7 +164,7 @@ class ExamAttemptServiceTest {
     }
 
     @Test
-    void submitAttempt_AnswerOutsideExam_ThrowsException() {
+    void submitAttempt_AnswerOutsideExam_IsIgnored() {
         ExamSection section = section(UUID.randomUUID(), exam);
         Question question = question(UUID.randomUUID(), section);
         AnswerItemRequest invalidAnswer = answerRequest(UUID.randomUUID(), null);
@@ -174,12 +175,14 @@ class ExamAttemptServiceTest {
         when(sectionRepository.findByExamIdAndDeletedAtIsNullOrderBySortOrder(examId)).thenReturn(List.of(section));
         when(questionRepository.findBySectionIdInAndDeletedAtIsNull(List.of(section.getId())))
                 .thenReturn(List.of(question));
+        when(optionRepository.findByQuestionIdInAndDeletedAtIsNull(List.of(question.getId()))).thenReturn(List.of());
+        when(answerRepository.findByAttemptId(attemptId)).thenReturn(List.of());
 
-        assertThrows(AppException.class,
-                () -> examAttemptService.submitAttempt(attemptId, user.getEmail(), request));
+        var response = examAttemptService.submitAttempt(attemptId, user.getEmail(), request);
 
-        verify(answerRepository, never()).saveAll(any());
-        verify(attemptRepository, never()).save(argThat(a -> a.getStatus() == AttemptStatus.SUBMITTED));
+        assertNotNull(response);
+        verify(answerRepository).saveAll(any());
+        verify(attemptRepository).save(argThat(a -> a.getStatus() == AttemptStatus.SUBMITTED));
     }
 
     @Test
