@@ -23,15 +23,16 @@ public class    CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Parse danh sách origins từ config (trim khoảng trắng để tránh lỗi cấu hình)
+        // Parse danh sách origins từ config (trim khoảng trắng và bỏ dấu / ở cuối nếu có)
         List<String> origins = Arrays.stream(allowedOriginsStr.split(","))
                 .map(String::trim)
+                .map(origin -> origin.endsWith("/") ? origin.substring(0, origin.length() - 1) : origin)
                 .filter(origin -> !origin.isEmpty())
                 .toList();
-        config.setAllowedOrigins(origins);
+        config.setAllowedOriginPatterns(origins);
 
         // Cho phép các HTTP methods cần thiết
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
 
         // Headers được phép gửi
         config.setAllowedHeaders(List.of(
@@ -39,7 +40,8 @@ public class    CorsConfig {
                 "Content-Type",
                 "Accept",
                 "X-Requested-With",
-                "Cache-Control"
+                "Cache-Control",
+                "Origin"
         ));
 
         // Expose Set-Cookie header để client biết cookie được set
@@ -52,9 +54,7 @@ public class    CorsConfig {
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", config);
-        source.registerCorsConfiguration("/oauth2/**", config);
-        source.registerCorsConfiguration("/login/**", config);
+        source.registerCorsConfiguration("/**", config);
 
         return source;
     }
