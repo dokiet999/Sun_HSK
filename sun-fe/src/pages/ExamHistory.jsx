@@ -24,7 +24,10 @@ function formatTime(secs) {
 
 function formatDate(iso) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleString('vi-VN', {
+  const safeIso = typeof iso === 'string' && !iso.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(iso)
+    ? `${iso}Z`
+    : iso
+  return new Date(safeIso).toLocaleString('vi-VN', {
     day: '2-digit', month: '2-digit', year: 'numeric',
     hour: '2-digit', minute: '2-digit'
   })

@@ -3,6 +3,24 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { examService } from '../services/examService'
 import styles from './TakeExam.module.css'
 
+const HSK_DEFAULT_DURATION = {
+  1: 40,
+  2: 55,
+  3: 90,
+  4: 105,
+  5: 125,
+  6: 140,
+}
+
+// Chuyển chuỗi datetime từ server (UTC) sang millisecond an toàn
+function parseServerDate(dateStr) {
+  if (!dateStr) return null
+  const hasTimezone = /Z|[+-]\d{2}(:\d{2})?$/.test(dateStr)
+  const safeStr = hasTimezone ? dateStr : `${dateStr}Z`
+  const time = new Date(safeStr).getTime()
+  return isNaN(time) ? null : time
+}
+
 export default function TakeExam() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -21,6 +39,15 @@ export default function TakeExam() {
 
   // Guard chống submit lặp (dùng ref để không trigger re-render)
   const isSubmitting = useRef(false)
+  const startTimeRef = useRef(null)
+
+  // Refs giữ state mới nhất tránh stale closure khi timer auto submit
+  const answersRef = useRef(answers)
+  answersRef.current = answers
+  const examRef = useRef(exam)
+  examRef.current = exam
+  const attemptRef = useRef(attempt)
+  attemptRef.current = attempt
 
   useEffect(() => {
     initExam()
@@ -31,17 +58,36 @@ export default function TakeExam() {
       setLoading(true)
       // 1. Lấy cấu trúc đề
       const detailRes = await examService.getExamDetail(id)
-      setExam(detailRes.result)
+      const examData = detailRes.result
+      setExam(examData)
       
       // 2. Bắt đầu làm bài (Start attempt)
       const attemptRes = await examService.startAttempt(id)
-      setAttempt(attemptRes.result)
+      const attemptData = attemptRes.result
+      setAttempt(attemptData)
       
-      // Khởi tạo timer
-      const expiresAt = new Date(attemptRes.result.expiresAt).getTime()
-      const now = new Date().getTime()
-      const diff = Math.floor((expiresAt - now) / 1000)
-      setTimeLeft(diff > 0 ? diff : 0)
+      // Ghi nhận thời điểm client bắt đầu làm bài
+      startTimeRef.current = Date.now()
+
+      // 3. Khởi tạo timer: tính thời lượng (phút -> giây)
+      const defaultDuration = HSK_DEFAULT_DURATION[examData?.hskLevel] || 40
+      const rawLimit = attemptData?.timeLimitMinutes || examData?.timeLimit
+      const durationMinutes = (rawLimit && rawLimit > 0) ? rawLimit : defaultDuration
+      const totalSeconds = durationMinutes * 60
+
+      let remaining = totalSeconds
+      if (attemptData?.expiresAt) {
+        const expiresAtMs = parseServerDate(attemptData.expiresAt)
+        if (expiresAtMs) {
+          const diff = Math.floor((expiresAtMs - Date.now()) / 1000)
+          // Nếu chênh lệch hợp lệ (> 0 và không lệch quá mức do desync giờ client/server)
+          if (diff > 0 && diff <= totalSeconds + 120) {
+            remaining = diff
+          }
+        }
+      }
+
+      setTimeLeft(remaining)
 
     } catch (error) {
       alert('Không thể tải đề thi hoặc tạo phiên làm bài.')
@@ -77,8 +123,9 @@ export default function TakeExam() {
   }
 
   const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60)
-    const s = seconds % 60
+    const safeSecs = Math.max(0, seconds || 0)
+    const m = Math.floor(safeSecs / 60)
+    const s = safeSecs % 60
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
   }
 
@@ -151,12 +198,17 @@ export default function TakeExam() {
 
     isSubmitting.current = true
     try {
-      const startedAt = new Date(attempt.startedAt).getTime()
-      const now = new Date().getTime()
-      const timeSpentSecs = Math.floor((now - startedAt) / 1000)
+      const currentAttempt = attemptRef.current || attempt
+      const currentExam = examRef.current || exam
+      const currentAnswers = answersRef.current || answers
 
-      const allQuestions = (exam.sections || []).flatMap(s => s.questions || [])
-      const mappedAnswers = Object.entries(answers).map(([qId, val]) => {
+      // Tính thời gian thực tế học viên đã làm bài (tính bằng giây)
+      const timeSpentSecs = startTimeRef.current
+        ? Math.max(1, Math.floor((Date.now() - startTimeRef.current) / 1000))
+        : 60
+
+      const allQuestions = (currentExam.sections || []).flatMap(s => s.questions || [])
+      const mappedAnswers = Object.entries(currentAnswers).map(([qId, val]) => {
         const q = allQuestions.find(x => x.id === qId)
         if (!q) return null
         const req = { questionId: qId }
@@ -172,7 +224,7 @@ export default function TakeExam() {
         return req
       }).filter(Boolean)
 
-      const res = await examService.submitAttempt(attempt.attemptId, {
+      const res = await examService.submitAttempt(currentAttempt.attemptId, {
         answers: mappedAnswers,
         timeSpentSecs: timeSpentSecs
       })
