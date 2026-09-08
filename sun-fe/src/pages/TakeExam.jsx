@@ -348,25 +348,29 @@ export default function TakeExam() {
                         {ans.options.map((opt, optIdx) => {
                           const label = ['A', 'B', 'C', 'D', 'E'][optIdx] || '*'
                           const userChose = opt.id === ans.selectedOptionId
-                          const isOptCorrect = opt.isCorrect
+                          const isOptCorrect = Boolean(
+                            opt.isCorrect ||
+                            opt.correct ||
+                            (ans.correctOptionId && opt.id === ans.correctOptionId)
+                          )
 
                           let cls = styles.reviewOpt
                           if (isOptCorrect && userChose) cls += ' ' + styles.reviewOptCorrectChosen
                           else if (isOptCorrect) cls += ' ' + styles.reviewOptCorrect
-                          else if (userChose) cls += ' ' + styles.reviewOptWrong
+                          else if (userChose) cls += ' ' + styles.reviewOptUserChosen
 
                           return (
                             <div key={opt.id} className={cls}>
                               <span className={styles.reviewOptLabel}>{label}</span>
                               <span className={styles.reviewOptContent}>{opt.content}</span>
                               {isOptCorrect && !userChose && (
-                                <span className={styles.reviewTag + ' ' + styles.reviewTagCorrect}>Đáp án đúng</span>
+                                <span className={`${styles.reviewTag} ${styles.reviewTagCorrect}`}>Đáp án đúng</span>
                               )}
                               {userChose && isOptCorrect && (
-                                <span className={styles.reviewTag + ' ' + styles.reviewTagCorrect}>Bạn chọn đúng ✓</span>
+                                <span className={`${styles.reviewTag} ${styles.reviewTagCorrect}`}>Bạn chọn đúng ✓</span>
                               )}
                               {userChose && !isOptCorrect && (
-                                <span className={styles.reviewTag + ' ' + styles.reviewTagWrong}>Bạn chọn ✗</span>
+                                <span className={`${styles.reviewTag} ${styles.reviewTagUserChosen}`}>Bạn chọn</span>
                               )}
                             </div>
                           )

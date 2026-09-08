@@ -720,12 +720,16 @@
 }
 .reviewOptCorrectChosen {
   border-color: #22c55e;
-  background: #dcfce7;
+  background: #f0fdf4;
   box-shadow: 0 0 0 2px #bbf7d0;
 }
+.reviewOptUserChosen {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
 .reviewOptWrong {
-  border-color: #fca5a5;
-  background: #fff5f5;
+  border-color: #cbd5e1;
+  background: #f8fafc;
 }
 
 .reviewOptLabel {
@@ -736,6 +740,7 @@
   align-items: center;
   justify-content: center;
   background: #e2e8f0;
+  color: #475569;
   font-size: 13px;
   font-weight: 700;
   flex-shrink: 0;
@@ -745,8 +750,12 @@
   background: #22c55e;
   color: #fff;
 }
+.reviewOptUserChosen .reviewOptLabel {
+  background: #64748b;
+  color: #fff;
+}
 .reviewOptWrong .reviewOptLabel {
-  background: #ef4444;
+  background: #64748b;
   color: #fff;
 }
 
@@ -758,7 +767,7 @@
 .reviewTag {
   font-size: 12px;
   font-weight: 700;
-  padding: 2px 10px;
+  padding: 3px 10px;
   border-radius: 20px;
   flex-shrink: 0;
 }
@@ -766,9 +775,15 @@
   background: #dcfce7;
   color: #15803d;
 }
+.reviewTagUserChosen {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #dbeafe;
+}
 .reviewTagWrong {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #dbeafe;
 }
 
 /* Fill blank / Short answer */

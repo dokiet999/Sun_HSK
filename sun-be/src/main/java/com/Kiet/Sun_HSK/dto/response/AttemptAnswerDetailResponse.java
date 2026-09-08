@@ -2,6 +2,7 @@ package com.Kiet.Sun_HSK.dto.response;
 
 import com.Kiet.Sun_HSK.enums.QuestionType;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,6 +49,7 @@ public class AttemptAnswerDetailResponse {
         String content;
         String imageUrl;
         String matchKey;
+        @JsonProperty("isCorrect")
         boolean isCorrect;
         int sortOrder;
     }
