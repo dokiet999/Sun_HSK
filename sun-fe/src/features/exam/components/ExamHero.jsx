@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import styles from './ExamHero.module.css'
 
-export default function ExamHero({ level }) {
+export default function ExamHero({ level, examCount }) {
   return (
     <div
       className={styles.hero}
@@ -29,37 +29,6 @@ export default function ExamHero({ level }) {
               Đề thi {level.label} — {level.sublabel}
             </h1>
             <p className={styles.desc}>{level.description}</p>
-
-            <div className={styles.metaRow}>
-              <div className={styles.metaItem}>
-                <span className={styles.metaIcon}>📚</span>
-                <div>
-                  <strong>{level.vocab.toLocaleString()}</strong>
-                  <span>từ vựng</span>
-                </div>
-              </div>
-              <div className={styles.metaItem}>
-                <span className={styles.metaIcon}>📝</span>
-                <div>
-                  <strong>{level.totalQuestions}</strong>
-                  <span>câu hỏi/đề</span>
-                </div>
-              </div>
-              <div className={styles.metaItem}>
-                <span className={styles.metaIcon}>⏱</span>
-                <div>
-                  <strong>{level.duration}</strong>
-                  <span>phút</span>
-                </div>
-              </div>
-              <div className={styles.metaItem}>
-                <span className={styles.metaIcon}>📋</span>
-                <div>
-                  <strong>{level.examCount}</strong>
-                  <span>đề thi</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right: section chips */}

@@ -57,7 +57,7 @@ app:
     refresh-token-expiration: ${JWT_REFRESH_EXP:604800000} # 7 ngày (ms)
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   cors:
-    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+    allowed-origins: ${CORS_ORIGINS:https://*.vercel.app,http://localhost:5173,http://localhost:3000}
   cookie:
     secure: ${COOKIE_SECURE:false}
     same-site: ${COOKIE_SAME_SITE:Lax}

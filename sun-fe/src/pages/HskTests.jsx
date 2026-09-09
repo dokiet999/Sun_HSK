@@ -24,7 +24,7 @@ export default function HskTests() {
   }, [])
 
   const stats = [
-    { icon: '📋', value: `${exams.length}+`, label: 'Đề thi' },
+    { icon: '📋', value: `${exams.length}`, label: 'Đề thi' },
     { icon: '🎯', value: '6',       label: 'Cấp độ HSK' },
     { icon: '👤', value: '10K+',   label: 'Học viên' },
     { icon: '⭐', value: '4.8',    label: 'Đánh giá TB' },

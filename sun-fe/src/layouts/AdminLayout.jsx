@@ -20,7 +20,7 @@ export default function AdminLayout({ children }) {
       <aside className={styles.sidebar}>
         {/* Logo */}
         <div className={styles.logo}>
-          <Link to="/" className={styles.logoLink}>
+          <Link to="/admin" className={styles.logoLink}>
             <span className={styles.logoMark}>☀</span>
             {!collapsed && <span className={styles.logoText}>Sun HSK</span>}
           </Link>
