@@ -6,6 +6,8 @@ import { hskLevels } from '../data/examData'
 import { examService } from '../services/examService'
 import styles from './HskLevelExams.module.css'
 
+const PAGE_SIZE = 5
+
 export default function HskLevelExams() {
   const { level: levelParam } = useParams()
   const levelId = parseInt(levelParam, 10)
@@ -13,15 +15,33 @@ export default function HskLevelExams() {
   const level = hskLevels.find((l) => l.id === levelId)
   
   const [exams, setExams] = useState([])
+  const [countsByLevel, setCountsByLevel] = useState({})
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Reset về trang 1 khi chuyển sang cấp độ HSK khác
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [levelId])
 
   useEffect(() => {
     async function fetchExams() {
       try {
-        const data = await examService.listExams({ size: 100 })
+        setLoading(true)
+        const data = await examService.listExams({ size: 500 })
         if (data && data.result && data.result.content) {
-          // Filter exams by the current level
-          const filtered = data.result.content.filter(exam => exam.hskLevel === levelId)
+          const allExams = data.result.content
+
+          // Tính số lượng đề thi thực tế theo từng cấp độ từ database
+          const counts = {}
+          allExams.forEach((exam) => {
+            const lvl = exam.hskLevel
+            counts[lvl] = (counts[lvl] || 0) + 1
+          })
+          setCountsByLevel(counts)
+
+          // Lọc danh sách đề cho cấp độ hiện tại
+          const filtered = allExams.filter((exam) => exam.hskLevel === levelId)
           setExams(filtered)
         }
       } catch (err) {
@@ -35,14 +55,22 @@ export default function HskLevelExams() {
 
   if (!level) return <Navigate to="/hsk-tests" replace />
 
-  // Next / Prev level for quick navigation
-  const prevLevel = hskLevels.find((l) => l.id === levelId - 1)
-  const nextLevel = hskLevels.find((l) => l.id === levelId + 1)
+  // Tính toán phân trang
+  const totalPages = Math.ceil(exams.length / PAGE_SIZE) || 1
+  const startIndex = (currentPage - 1) * PAGE_SIZE
+  const paginatedExams = exams.slice(startIndex, startIndex + PAGE_SIZE)
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      setCurrentPage(page)
+      window.scrollTo({ top: 300, behavior: 'smooth' })
+    }
+  }
 
   return (
     <PageContainer>
       {/* Level-colored hero */}
-      <ExamHero level={level} />
+      <ExamHero level={level} examCount={loading ? undefined : exams.length} />
 
       <div className={styles.body}>
         <div className="container">
@@ -65,7 +93,7 @@ export default function HskLevelExams() {
                       />
                       <span className={styles.levelLinkText}>
                         <b>{l.label}</b>
-                        <small>{l.sublabel} · {l.examCount} đề</small>
+                        <small>{l.sublabel} · {countsByLevel[l.id] !== undefined ? countsByLevel[l.id] : 0} đề</small>
                       </span>
                       {l.id === levelId && <span className={styles.activeArrow}>←</span>}
                     </Link>
@@ -104,7 +132,11 @@ export default function HskLevelExams() {
                   <span style={{ color: level.color }}>{level.label}</span>
                 </h2>
                 <p className={styles.mainDesc}>
-                  {loading ? 'Đang tải...' : `${exams.length} đề thi`} · Lọc và sắp xếp theo nhu cầu của bạn.
+                  {loading
+                    ? 'Đang tải...'
+                    : `${exams.length} đề thi${
+                        totalPages > 1 ? ` · Trang ${currentPage}/${totalPages}` : ''
+                      } · Lọc và sắp xếp theo nhu cầu của bạn.`}
                 </p>
               </div>
 
@@ -113,22 +145,41 @@ export default function HskLevelExams() {
               ) : exams.length === 0 ? (
                 <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Chưa có đề thi nào cho cấp độ này.</div>
               ) : (
-                <ExamList exams={exams} levelColor={level.color} />
+                <ExamList exams={paginatedExams} levelColor={level.color} />
               )}
 
-              {/* Level navigation */}
-              <div className={styles.levelNav2}>
-                {prevLevel ? (
-                  <Link to={`/hsk-tests/${prevLevel.id}`} className={styles.navBtn}>
-                    ← {prevLevel.label}
-                  </Link>
-                ) : <span />}
-                {nextLevel && (
-                  <Link to={`/hsk-tests/${nextLevel.id}`} className={styles.navBtn} style={{ marginLeft: 'auto' }}>
-                    {nextLevel.label} →
-                  </Link>
-                )}
-              </div>
+              {/* Pagination controls */}
+              {totalPages > 1 && (
+                <div className={styles.pagination} style={{ '--active-color': level.color }}>
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    aria-label="Trang trước"
+                  >
+                    ← Trước
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                    <button
+                      key={p}
+                      className={`${styles.pageBtn} ${currentPage === p ? styles.pageBtnActive : ''}`}
+                      onClick={() => handlePageChange(p)}
+                    >
+                      {p}
+                    </button>
+                  ))}
+
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    aria-label="Trang sau"
+                  >
+                    Sau →
+                  </button>
+                </div>
+              )}
             </main>
           </div>
         </div>
