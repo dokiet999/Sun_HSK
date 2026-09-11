@@ -3,11 +3,12 @@ import { NavLink, Link, useNavigate } from 'react-router-dom'
 import styles from './AdminLayout.module.css'
 
 const navItems = [
-  { to: '/admin',           label: 'Dashboard',       icon: '📊', end: true },
-  { to: '/admin/analytics', label: 'Phân tích',       icon: '📈' },
-  { to: '/admin/exams',     label: 'Quản lý đề thi',  icon: '📝' },
-  { to: '/admin/users',     label: 'Người dùng',      icon: '👥' },
-  { to: '/admin/settings',  label: 'Cài đặt',         icon: '⚙️' },
+  { to: '/admin', label: 'Dashboard', icon: '📊', end: true },
+  { to: '/admin/vocabulary', label: 'Quản lý từ vựng', icon: '📖' },
+  { to: '/admin/exams', label: 'Quản lý đề thi', icon: '📝' },
+  { to: '/admin/analytics', label: 'Phân tích', icon: '📈' },
+  { to: '/admin/users', label: 'Người dùng', icon: '👥' },
+  { to: '/admin/settings', label: 'Cài đặt', icon: '⚙️' },
 ]
 
 export default function AdminLayout({ children }) {

@@ -1,0 +1,284 @@
+.card {
+  background: var(--white, #ffffff);
+  border: 1.5px solid var(--line, #dce8f6);
+  border-radius: 20px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(16, 70, 140, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.card:hover {
+  border-color: var(--accent-color, #22c55e);
+  box-shadow: 0 10px 30px rgba(16, 70, 140, 0.08);
+  transform: translateY(-2px);
+}
+
+.cardBookmarked {
+  border-left: 4px solid #f59e0b;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tagGroup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.posBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted, #60708a);
+  background: #f1f5f9;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: capitalize;
+}
+
+.hvBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1e40af;
+  background: #eff6ff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #dbeafe;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.iconActionBtn {
+  background: #f8fafc;
+  border: 1px solid var(--line, #dce8f6);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconActionBtn:hover {
+  background: #e2e8f0;
+  transform: scale(1.05);
+}
+
+.audioPlaying {
+  background: #dbeafe !important;
+  border-color: #3b82f6 !important;
+  animation: pulse 1s infinite alternate;
+}
+
+.bookmarked {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+  color: #d97706;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* Word Hero */
+.wordHero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 0;
+}
+
+.hanziText {
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text, #142033);
+  line-height: 1.15;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.wordHero:hover .hanziText {
+  color: var(--accent-color, #22c55e);
+}
+
+.pinyinText {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--muted, #60708a);
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+
+/* Meanings */
+.meaningSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meaningVi {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text, #142033);
+  line-height: 1.4;
+}
+
+.meaningEn {
+  font-size: 0.88rem;
+  color: var(--muted, #60708a);
+  font-style: italic;
+}
+
+/* Collocations & Examples */
+.collocationBox,
+.examplesBox {
+  background: #f8fafc;
+  border: 1px solid #edf2f7;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted, #60708a);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.collocationList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.collocationItem {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.collocationText {
+  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  font-weight: 600;
+  color: var(--text, #142033);
+  margin-right: 6px;
+}
+
+.collocationVi {
+  color: var(--muted, #60708a);
+}
+
+.exampleList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.exampleItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.exampleItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.exampleContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.exampleZh {
+  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text, #142033);
+}
+
+.exampleVi {
+  font-size: 0.85rem;
+  color: var(--muted, #60708a);
+}
+
+.exampleAudioBtn {
+  background: transparent;
+  border: none;
+  font-size: 0.95rem;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.exampleAudioBtn:hover {
+  background: #e2e8f0;
+}
+
+/* Status Bar */
+.statusBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--line, #dce8f6);
+  margin-top: auto;
+}
+
+.statusLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted, #60708a);
+}
+
+.statusButtonGroup {
+  display: flex;
+  gap: 4px;
+}
+
+.statusOptionBtn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.statusOptionBtn:hover:not(:disabled) {
+  border-color: #94a3b8;
+}
+
+.statusSelected {
+  font-weight: 700;
+}

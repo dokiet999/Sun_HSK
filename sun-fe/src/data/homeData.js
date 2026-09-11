@@ -30,12 +30,12 @@ export const features = [
 ]
 
 export const levels = [
-  { level: 'HSK 1', label: 'Cơ bản',    description: 'Làm quen tiếng Trung' },
-  { level: 'HSK 2', label: 'Sơ cấp',    description: 'Giao tiếp hằng ngày' },
+  { level: 'HSK 1', label: 'Cơ bản', description: 'Làm quen tiếng Trung' },
+  { level: 'HSK 2', label: 'Sơ cấp', description: 'Giao tiếp hằng ngày' },
   { level: 'HSK 3', label: 'Trung cấp', description: 'Mở rộng chủ đề' },
-  { level: 'HSK 4', label: 'Khá',        description: 'Đọc hiểu & giao tiếp' },
-  { level: 'HSK 5', label: 'Nâng cao',  description: 'Văn bản & học thuật' },
-  { level: 'HSK 6', label: 'Thành thạo',description: 'Tiếng Trung nâng cao' },
+  { level: 'HSK 4', label: 'Khá', description: 'Đọc hiểu & giao tiếp' },
+  { level: 'HSK 5', label: 'Nâng cao', description: 'Văn bản & học thuật' },
+  { level: 'HSK 6', label: 'Thành thạo', description: 'Tiếng Trung nâng cao' },
 ]
 
 export const studyCards = [
@@ -64,10 +64,10 @@ export const studyCards = [
 ]
 
 export const navLinks = [
-  { href: '/hsk-tests', label: 'HSK Online Test' },
-  { href: '#levels',   label: 'HSK 1–6' },
-  { href: '#study',    label: 'Luyện tập' },
-  { href: '#vocab',    label: 'Từ vựng' },
+  { href: '/hsk-tests', label: 'Online Test' },
+  { href: '/vocabulary', label: 'Từ vựng' },
+  { href: '#levels', label: 'Cấp độ' },
+  { href: '#study', label: 'Luyện tập' },
 ]
 
 export const heroScores = [

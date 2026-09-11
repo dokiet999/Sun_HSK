@@ -77,7 +77,7 @@ export default function Navbar() {
           >
             {menuOpen ? '✕' : '☰'}
           </button>
-          
+
           {user ? (
             <div className={styles.userMenu}>
               <div className={styles.avatarWrap}>

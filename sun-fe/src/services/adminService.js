@@ -30,6 +30,81 @@ export const adminService = {
     return response.data;
   },
 
+  // --- VOCABULARY MANAGEMENT ---
+  /**
+   * Lấy danh sách từ vựng có tìm kiếm & phân trang
+   */
+  getVocabularies: async ({ page = 0, size = 20, level, lesson, keyword } = {}) => {
+    const params = new URLSearchParams();
+    params.append('page', page);
+    params.append('size', size);
+    if (level && level !== 'all') params.append('level', level);
+    if (lesson && lesson !== 'all') params.append('lesson', lesson);
+    if (keyword && keyword.trim()) params.append('keyword', keyword.trim());
+    const response = await api.get(`/api/v1/admin/vocabulary?${params.toString()}`);
+    return response.data;
+  },
+
+  /**
+   * Lấy thống kê số từ vựng
+   */
+  getVocabularyStats: async () => {
+    const response = await api.get('/api/v1/admin/vocabulary/stats');
+    return response.data;
+  },
+
+  /**
+   * Lấy chi tiết từ vựng theo ID
+   */
+  getVocabularyDetail: async (id) => {
+    const response = await api.get(`/api/v1/admin/vocabulary/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Tạo từ vựng mới
+   */
+  createVocabulary: async (data) => {
+    const response = await api.post('/api/v1/admin/vocabulary', data);
+    return response.data;
+  },
+
+  /**
+   * Cập nhật từ vựng
+   */
+  updateVocabulary: async (id, data) => {
+    const response = await api.put(`/api/v1/admin/vocabulary/${id}`, data);
+    return response.data;
+  },
+
+  /**
+   * Xóa từ vựng
+   */
+  deleteVocabulary: async (id) => {
+    const response = await api.delete(`/api/v1/admin/vocabulary/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Import batch danh sách từ vựng từ JSON
+   */
+  importVocabularies: async (requests, defaultLesson = null) => {
+    let url = '/api/v1/admin/vocabulary/import';
+    if (defaultLesson) {
+      url += `?defaultLesson=${defaultLesson}`;
+    }
+    const response = await api.post(url, requests);
+    return response.data;
+  },
+
+  /**
+   * Sinh bài tập tự động cho HSK level
+   */
+  generateExercises: async (level = 1) => {
+    const response = await api.post(`/api/v1/admin/exercises/generate?level=${level}`);
+    return response.data;
+  },
+
   // --- EXAM METADATA ---
   createExam: async (data) => {
     const response = await api.post('/api/v1/admin/exams', data);

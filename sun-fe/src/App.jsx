@@ -9,10 +9,13 @@ import ExamIntro      from './pages/ExamIntro'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminExams     from './pages/AdminExams'
 import AdminExamBuilder from './pages/AdminExamBuilder'
+import AdminVocabulary from './pages/AdminVocabulary'
 import ExamHistory    from './pages/ExamHistory'
 import ReviewAttempt  from './pages/ReviewAttempt'
 import NotFound       from './pages/NotFound'
 import UnderDevelopment from './pages/UnderDevelopment'
+import Vocabulary     from './pages/Vocabulary'
+import LessonDetail   from './pages/LessonDetail'
 
 export default function App() {
   return (
@@ -25,9 +28,13 @@ export default function App() {
         <Route path="/hsk-tests/:level" element={<HskLevelExams />} />
         <Route path="/hsk-tests/intro/:id" element={<ExamIntro />} />
         <Route path="/hsk-tests/take/:id" element={<TakeExam />} />
+        <Route path="/vocabulary"       element={<Vocabulary />} />
+        <Route path="/vocabulary/:level" element={<Vocabulary />} />
+        <Route path="/vocabulary/:level/lesson/:lessonNumber" element={<LessonDetail />} />
         <Route path="/history"          element={<ExamHistory />} />
         <Route path="/history/:attemptId/result" element={<ReviewAttempt />} />
         <Route path="/admin"            element={<AdminDashboard />} />
+        <Route path="/admin/vocabulary" element={<AdminVocabulary />} />
         <Route path="/admin/exams"      element={<AdminExams />} />
         <Route path="/admin/exams/create" element={<AdminExamBuilder />} />
         <Route path="/admin/exams/:id"    element={<AdminExamBuilder />} />
