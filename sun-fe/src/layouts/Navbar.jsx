@@ -11,14 +11,21 @@ export default function Navbar() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser))
-      } catch (e) {
-        // Handle invalid JSON
+    const syncUser = () => {
+      const storedUser = localStorage.getItem('user')
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser))
+        } catch (e) {
+          setUser(null)
+        }
+      } else {
+        setUser(null)
       }
     }
+    syncUser()
+    window.addEventListener('storage', syncUser)
+    return () => window.removeEventListener('storage', syncUser)
   }, [])
 
   const handleLogout = () => {
@@ -74,8 +81,12 @@ export default function Navbar() {
           {user ? (
             <div className={styles.userMenu}>
               <div className={styles.avatarWrap}>
-                <div className={styles.avatar}>{user.email?.charAt(0).toUpperCase()}</div>
-                <span className={styles.userName}>{user.username || user.email?.split('@')[0]}</span>
+                <div className={styles.avatar}>
+                  {(user.displayName || user.username || user.email || 'U').charAt(0).toUpperCase()}
+                </div>
+                <span className={styles.userName}>
+                  {user.displayName || user.username || user.email?.split('@')[0]}
+                </span>
               </div>
               <button className={styles.logoutBtn} onClick={handleLogout}>Đăng xuất</button>
             </div>

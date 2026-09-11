@@ -40,9 +40,12 @@ const processQueue = (error, token = null) => {
  */
 export async function refreshAuthToken() {
   const refreshToken = localStorage.getItem('refreshToken');
+  if (!refreshToken) {
+    throw new Error('Không tìm thấy refreshToken');
+  }
   try {
     const response = await refreshClient.post('/api/v1/auth/refresh', {
-      refreshToken: refreshToken || undefined,
+      refreshToken,
     });
 
     const data = response.data?.result;
@@ -118,6 +121,12 @@ api.interceptors.response.use(
     const requestUrl = originalRequest.url || '';
     // Nếu request bị 401 chính là API login hoặc refresh thì không lặp lại
     if (requestUrl.includes('/api/v1/auth/login') || requestUrl.includes('/api/v1/auth/refresh')) {
+      return Promise.reject(error);
+    }
+
+    // Nếu người dùng là khách (chưa từng đăng nhập, không có token lẫn refreshToken), không refresh và không ép redirect sang /login
+    const hasToken = localStorage.getItem('token') || localStorage.getItem('refreshToken');
+    if (!hasToken) {
       return Promise.reject(error);
     }
 
