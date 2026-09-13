@@ -52,7 +52,7 @@ server:
 # ==================== App Config ====================
 app:
   jwt:
-    secret: ${JWT_SECRET:92dc2d64d37b77c7035a511b25a3b3a822df2d8d95f57a8d24d07341ba0f83fe8c6b4c31ef9f0570fbfcdc185e722eac847af2ea7653ea9f23c796fdadd07058}
+    secret: ${JWT_SECRET}
     access-token-expiration: ${JWT_ACCESS_EXP:900000}      # 15 phút (ms)
     refresh-token-expiration: ${JWT_REFRESH_EXP:604800000} # 7 ngày (ms)
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
