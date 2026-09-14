@@ -45,6 +45,11 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
 
+  # ==================== Web MVC / Problem Details (RFC 9457) ====================
+  mvc:
+    problemdetails:
+      enabled: true
+
 # ==================== Server ====================
 server:
   port: ${PORT:${SERVER_PORT:8081}}
@@ -52,12 +57,12 @@ server:
 # ==================== App Config ====================
 app:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:92dc2d64d37b77c7035a511b25a3b3a822df2d8d95f57a8d24d07341ba0f83fe8c6b4c31ef9f0570fbfcdc185e722eac847af2ea7653ea9f23c796fdadd07058}
     access-token-expiration: ${JWT_ACCESS_EXP:900000}      # 15 phút (ms)
     refresh-token-expiration: ${JWT_REFRESH_EXP:604800000} # 7 ngày (ms)
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   cors:
-    allowed-origins: ${CORS_ORIGINS:https://*.vercel.app,http://localhost:5173,http://localhost:3000}
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
   cookie:
     secure: ${COOKIE_SECURE:false}
     same-site: ${COOKIE_SAME_SITE:Lax}
@@ -84,4 +89,3 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
-
