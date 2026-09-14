@@ -284,6 +284,7 @@ public class VocabularyService {
 
         return VocabularyResponse.builder()
                 .id(vocab.getId())
+                .hskVersion(vocab.getHskVersion())
                 .hskLevel(vocab.getHskLevel())
                 .lessonNumber(vocab.getLessonNumber())
                 .position(vocab.getPosition())

@@ -122,7 +122,7 @@ public class AdminVocabularyController {
     public ResponseEntity<ApiResponse<Integer>> generateExercises(
             @RequestParam(defaultValue = "1") int level
     ) {
-        int count = exerciseGenerationService.generateForLevel(level);
-        return ResponseEntity.ok(ApiResponse.success("Sinh thành công " + count + " bài tập cho HSK " + level, count));
+        int count = level <= 0 ? exerciseGenerationService.generateAllLevels() : exerciseGenerationService.generateForLevel(level);
+        return ResponseEntity.ok(ApiResponse.success("Sinh thành công " + count + " bài tập cho " + (level <= 0 ? "tất cả HSK levels" : ("HSK " + level)), count));
     }
 }

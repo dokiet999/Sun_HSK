@@ -1,5 +1,6 @@
 package com.Kiet.Sun_HSK.entity;
 
+import com.Kiet.Sun_HSK.enums.HskVersion;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,6 +25,11 @@ public class Vocabulary {
      */
     @Id
     Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "hsk_version", nullable = false, length = 10)
+    @Builder.Default
+    HskVersion hskVersion = HskVersion.HSK_2;
 
     @Column(name = "hsk_level", nullable = false)
     int hskLevel;

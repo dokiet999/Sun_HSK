@@ -2,6 +2,7 @@ package com.Kiet.Sun_HSK.service.importer;
 
 import com.Kiet.Sun_HSK.dto.request.VocabularyImportRequest;
 import com.Kiet.Sun_HSK.entity.Vocabulary;
+import com.Kiet.Sun_HSK.enums.HskVersion;
 import com.Kiet.Sun_HSK.repository.VocabularyRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,12 @@ public class VocabularyImporter {
     public Vocabulary importVocabulary(VocabularyImportRequest req) {
         Vocabulary vocab = vocabularyRepository.findById(req.getId())
                 .orElseGet(() -> Vocabulary.builder().id(req.getId()).build());
+
+        if (req.getHskVersion() != null) {
+            vocab.setHskVersion(req.getHskVersion());
+        } else if (vocab.getHskVersion() == null) {
+            vocab.setHskVersion(HskVersion.HSK_2);
+        }
 
         vocab.setHskLevel(req.getLevel());
         if (req.getLessonNumber() != null) {

@@ -1,5 +1,6 @@
 package com.Kiet.Sun_HSK.dto.response;
 
+import com.Kiet.Sun_HSK.enums.HskVersion;
 import com.Kiet.Sun_HSK.enums.VocabularyLearningStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,6 +15,8 @@ import java.util.List;
 public class VocabularyResponse {
 
     Long id;
+
+    HskVersion hskVersion;
 
     int hskLevel;
 

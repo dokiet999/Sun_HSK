@@ -1,6 +1,7 @@
 package com.Kiet.Sun_HSK.repository;
 
 import com.Kiet.Sun_HSK.entity.Vocabulary;
+import com.Kiet.Sun_HSK.enums.HskVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,11 +15,15 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Long> {
 
     List<Vocabulary> findByHskLevelOrderBySortOrderAsc(int hskLevel);
 
+    List<Vocabulary> findByHskVersionAndHskLevelOrderBySortOrderAsc(HskVersion hskVersion, int hskLevel);
+
     List<Vocabulary> findByHskLevelAndDefaultInReviewList(int hskLevel, Boolean defaultInReviewList);
 
     Optional<Vocabulary> findByHanzi(String hanzi);
 
     long countByHskLevel(int hskLevel);
+
+    long countByHskVersionAndHskLevel(HskVersion hskVersion, int hskLevel);
 
     org.springframework.data.domain.Page<Vocabulary> findByHskLevel(int hskLevel, org.springframework.data.domain.Pageable pageable);
 
@@ -50,6 +55,16 @@ public interface VocabularyRepository extends JpaRepository<Vocabulary, Long> {
            "WHERE v.hskLevel = :level " +
            "ORDER BY v.lessonNumber ASC, v.position ASC, v.sortOrder ASC")
     List<Vocabulary> findByHskLevelWithDetails(@Param("level") int level);
+
+    @Query("SELECT DISTINCT v FROM Vocabulary v " +
+           "LEFT JOIN FETCH v.collocations " +
+           "LEFT JOIN FETCH v.examples " +
+           "WHERE v.hskVersion = :version AND v.hskLevel = :level " +
+           "ORDER BY v.lessonNumber ASC, v.position ASC, v.sortOrder ASC")
+    List<Vocabulary> findByHskVersionAndHskLevelWithDetails(
+            @Param("version") HskVersion version,
+            @Param("level") int level
+    );
 
     @Query("SELECT COALESCE(MAX(v.id), 0) FROM Vocabulary v")
     Long findMaxId();

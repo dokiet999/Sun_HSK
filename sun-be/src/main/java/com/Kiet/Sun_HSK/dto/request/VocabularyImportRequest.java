@@ -1,5 +1,6 @@
 package com.Kiet.Sun_HSK.dto.request;
 
+import com.Kiet.Sun_HSK.enums.HskVersion;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -12,6 +13,9 @@ import java.util.List;
 public class VocabularyImportRequest {
 
     Long id;
+
+    @JsonProperty("hsk_version")
+    HskVersion hskVersion;
 
     int level;
 
@@ -60,6 +64,7 @@ public class VocabularyImportRequest {
     private void unpackWords(VocabularyImportRequest words) {
         if (words != null) {
             if (this.id == null) this.id = words.id;
+            if (this.hskVersion == null) this.hskVersion = words.hskVersion;
             if (this.level == 0) this.level = words.level;
             if (this.hanzi == null) this.hanzi = words.hanzi;
             if (this.pinyin == null) this.pinyin = words.pinyin;
