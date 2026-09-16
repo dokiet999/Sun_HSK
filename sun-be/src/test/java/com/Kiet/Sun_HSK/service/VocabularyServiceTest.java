@@ -124,7 +124,7 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getByLevel - Khách chưa đăng nhập (userId == null) trả về danh sách từ vựng với userStatus null")
     void getByLevel_GuestUser_Success() {
-        when(vocabularyRepository.findByHskLevelWithDetails(1)).thenReturn(List.of(vocab1, vocab2));
+        when(vocabularyRepository.findByHskLevelAndHskVersionWithDetails(1, null)).thenReturn(List.of(vocab1, vocab2));
 
         List<VocabularyResponse> result = vocabularyService.getByLevel(1, null);
 
@@ -135,15 +135,14 @@ class VocabularyServiceTest {
         assertFalse(result.get(0).getInReviewList());
         assertEquals("谢谢", result.get(1).getHanzi());
 
-        verify(vocabularyRepository, times(1)).findByHskLevelWithDetails(1);
+        verify(vocabularyRepository, times(1)).findByHskLevelAndHskVersionWithDetails(1, null);
         verifyNoInteractions(userVocabularyRepository);
     }
 
     @Test
     @DisplayName("getByLevel - Người dùng đã đăng nhập (userId != null) trả về kèm trạng thái học tập và ghim review")
     void getByLevel_LoggedInUser_Success() {
-        when(vocabularyRepository.findByHskLevelWithDetails(1)).thenReturn(List.of(vocab1, vocab2));
-        when(userVocabularyRepository.findByUserIdAndStatus(mockUserId, null)).thenReturn(List.of(userVocab1));
+        when(vocabularyRepository.findByHskLevelAndHskVersionWithDetails(1, null)).thenReturn(List.of(vocab1, vocab2));
         when(userVocabularyRepository.findByUserIdAndVocabularyId(mockUserId, 1L)).thenReturn(Optional.of(userVocab1));
         when(userVocabularyRepository.findByUserIdAndVocabularyId(mockUserId, 2L)).thenReturn(Optional.empty());
 
@@ -159,20 +158,21 @@ class VocabularyServiceTest {
         assertNull(result.get(1).getUserStatus());
         assertFalse(result.get(1).getInReviewList());
 
-        verify(vocabularyRepository, times(1)).findByHskLevelWithDetails(1);
-        verify(userVocabularyRepository, times(1)).findByUserIdAndStatus(mockUserId, null);
+        verify(vocabularyRepository, times(1)).findByHskLevelAndHskVersionWithDetails(1, null);
+        verify(userVocabularyRepository, times(1)).findByUserIdAndVocabularyId(mockUserId, 1L);
+        verify(userVocabularyRepository, times(1)).findByUserIdAndVocabularyId(mockUserId, 2L);
     }
 
     @Test
     @DisplayName("getByLevel - Cấp độ không có từ nào trả về danh sách rỗng")
     void getByLevel_EmptyList() {
-        when(vocabularyRepository.findByHskLevelWithDetails(6)).thenReturn(Collections.emptyList());
+        when(vocabularyRepository.findByHskLevelAndHskVersionWithDetails(6, null)).thenReturn(Collections.emptyList());
 
         List<VocabularyResponse> result = vocabularyService.getByLevel(6, null);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(vocabularyRepository, times(1)).findByHskLevelWithDetails(6);
+        verify(vocabularyRepository, times(1)).findByHskLevelAndHskVersionWithDetails(6, null);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -237,17 +237,17 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getLessonOverview - Có sẵn distinctLessons: Tính toán bài học, tiến độ và hoàn thành cho user")
     void getLessonOverview_WithDistinctLessons_LoggedInUser() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(List.of(1, 2));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1, 2));
 
         // Mock dữ liệu trạng thái của user cho level 1
         List<Object[]> statusRows = new ArrayList<>();
         statusRows.add(new Object[]{1L, VocabularyLearningStatus.MASTERED});
         statusRows.add(new Object[]{2L, VocabularyLearningStatus.LEARNING});
         statusRows.add(new Object[]{3L, VocabularyLearningStatus.NEW});
-        when(userVocabularyRepository.findStatusMapByUserIdAndLevel(mockUserId, 1)).thenReturn(statusRows);
+        when(userVocabularyRepository.findStatusMapByUserIdAndLevelAndVersion(mockUserId, 1, null)).thenReturn(statusRows);
 
-        when(vocabularyRepository.findIdsByHskLevelAndLessonNumber(1, 1)).thenReturn(List.of(1L, 2L));
-        when(vocabularyRepository.findIdsByHskLevelAndLessonNumber(1, 2)).thenReturn(List.of(3L, 4L));
+        when(vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(1, 1, null)).thenReturn(List.of(1L, 2L));
+        when(vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(1, 2, null)).thenReturn(List.of(3L, 4L));
 
         LessonOverviewResponse response = vocabularyService.getLessonOverview(1, 10, mockUserId);
 
@@ -279,8 +279,8 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getLessonOverview - Có sẵn distinctLessons: Khách chưa đăng nhập (userId == null)")
     void getLessonOverview_WithDistinctLessons_GuestUser() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(List.of(1));
-        when(vocabularyRepository.findIdsByHskLevelAndLessonNumber(1, 1)).thenReturn(List.of(1L, 2L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1));
+        when(vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(1, 1, null)).thenReturn(List.of(1L, 2L));
 
         LessonOverviewResponse response = vocabularyService.getLessonOverview(1, 10, null);
 
@@ -296,8 +296,8 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getLessonOverview - Fallback khi không có distinctLessons (chia bài theo pageSize)")
     void getLessonOverview_FallbackAllIds_Success() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(Collections.emptyList());
-        when(vocabularyRepository.findIdsByHskLevel(1)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(Collections.emptyList());
+        when(vocabularyRepository.findIdsByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
 
         // pageSize <= 0 sẽ tự fallback về 10, ở đây truyền 2 -> 3 bài (2 + 2 + 1)
         LessonOverviewResponse response = vocabularyService.getLessonOverview(1, 2, null);
@@ -316,8 +316,8 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getLessonOverview - Fallback khi pageSize <= 0 sẽ tự gán mặc định bằng 10")
     void getLessonOverview_FallbackAllIds_InvalidPageSize() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(Collections.emptyList());
-        when(vocabularyRepository.findIdsByHskLevel(1)).thenReturn(List.of(1L, 2L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(Collections.emptyList());
+        when(vocabularyRepository.findIdsByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1L, 2L));
 
         LessonOverviewResponse response = vocabularyService.getLessonOverview(1, -5, null);
 
@@ -333,8 +333,8 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getWordsByLesson - Có distinctLessons: Lấy chi tiết từ vựng theo số bài học khi đã đăng nhập")
     void getWordsByLesson_WithDistinctLessons_LoggedInUser() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(List.of(1, 2));
-        when(vocabularyRepository.findIdsByHskLevelAndLessonNumber(1, 1)).thenReturn(List.of(1L, 2L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1, 2));
+        when(vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(1, 1, null)).thenReturn(List.of(1L, 2L));
         when(vocabularyRepository.findByIdsWithDetails(List.of(1L, 2L))).thenReturn(List.of(vocab1, vocab2));
         when(userVocabularyRepository.findByUserIdAndVocabularyIdIn(mockUserId, List.of(1L, 2L)))
                 .thenReturn(List.of(userVocab1));
@@ -359,8 +359,8 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getWordsByLesson - Có distinctLessons nhưng danh sách ID rỗng trả về words rỗng")
     void getWordsByLesson_EmptyLessonIds() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(List.of(1));
-        when(vocabularyRepository.findIdsByHskLevelAndLessonNumber(1, 1)).thenReturn(Collections.emptyList());
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1));
+        when(vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(1, 1, null)).thenReturn(Collections.emptyList());
 
         LessonVocabularyResponse response = vocabularyService.getWordsByLesson(1, 1, 10, null);
 
@@ -373,8 +373,8 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getWordsByLesson - Fallback khi không có distinctLessons và start >= allIds.size()")
     void getWordsByLesson_FallbackAllIds_StartBeyondSize() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(Collections.emptyList());
-        when(vocabularyRepository.findIdsByHskLevel(1)).thenReturn(List.of(1L, 2L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(Collections.emptyList());
+        when(vocabularyRepository.findIdsByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1L, 2L));
 
         // lessonNumber = 5, pageSize = 10 -> start = 40 >= 2
         LessonVocabularyResponse response = vocabularyService.getWordsByLesson(1, 5, 10, null);
@@ -387,8 +387,8 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getWordsByLesson - Chuẩn hóa tham số pageSize <= 0 và lessonNumber < 1")
     void getWordsByLesson_NormalizeParams() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(List.of(1));
-        when(vocabularyRepository.findIdsByHskLevelAndLessonNumber(1, 1)).thenReturn(List.of(1L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1));
+        when(vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(1, 1, null)).thenReturn(List.of(1L));
         when(vocabularyRepository.findByIdsWithDetails(List.of(1L))).thenReturn(List.of(vocab1));
 
         LessonVocabularyResponse response = vocabularyService.getWordsByLesson(1, -1, -5, null);
@@ -405,20 +405,20 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getLessonWordIds - Có distinctLessons trả về ID theo bài học")
     void getLessonWordIds_WithDistinctLessons() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(List.of(1, 2));
-        when(vocabularyRepository.findIdsByHskLevelAndLessonNumber(1, 1)).thenReturn(List.of(1L, 2L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1, 2));
+        when(vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(1, 1, null)).thenReturn(List.of(1L, 2L));
 
         List<Long> result = vocabularyService.getLessonWordIds(1, 1, 10);
 
         assertEquals(List.of(1L, 2L), result);
-        verify(vocabularyRepository, times(1)).findIdsByHskLevelAndLessonNumber(1, 1);
+        verify(vocabularyRepository, times(1)).findIdsByHskLevelAndLessonNumberAndHskVersion(1, 1, null);
     }
 
     @Test
     @DisplayName("getLessonWordIds - Fallback khi không có distinctLessons")
     void getLessonWordIds_FallbackAllIds_Success() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(Collections.emptyList());
-        when(vocabularyRepository.findIdsByHskLevel(1)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(Collections.emptyList());
+        when(vocabularyRepository.findIdsByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1L, 2L, 3L, 4L, 5L));
 
         // lesson 2, pageSize 2 -> start = 2, end = 4 -> [3L, 4L]
         List<Long> result = vocabularyService.getLessonWordIds(1, 2, 2);
@@ -429,8 +429,8 @@ class VocabularyServiceTest {
     @Test
     @DisplayName("getLessonWordIds - Fallback khi start >= allIds.size() trả về danh sách rỗng")
     void getLessonWordIds_FallbackAllIds_OutOfBounds() {
-        when(vocabularyRepository.findDistinctLessonNumbersByHskLevel(1)).thenReturn(Collections.emptyList());
-        when(vocabularyRepository.findIdsByHskLevel(1)).thenReturn(List.of(1L, 2L));
+        when(vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(1, null)).thenReturn(Collections.emptyList());
+        when(vocabularyRepository.findIdsByHskLevelAndHskVersion(1, null)).thenReturn(List.of(1L, 2L));
 
         List<Long> result = vocabularyService.getLessonWordIds(1, 10, 10);
 

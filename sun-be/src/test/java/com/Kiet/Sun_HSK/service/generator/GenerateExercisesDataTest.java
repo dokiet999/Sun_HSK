@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@Disabled("Chỉ chạy thủ công để sinh dữ liệu bài tập vào database khi cần")
 class GenerateExercisesDataTest {
 
     @Autowired
