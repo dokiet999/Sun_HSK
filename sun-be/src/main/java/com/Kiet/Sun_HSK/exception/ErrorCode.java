@@ -20,11 +20,13 @@ public enum ErrorCode {
     // ── User ──────────────────────────────────────────────────────────────────
     USER_NOT_FOUND(404, "Không tìm thấy người dùng"),
 
-    // ── Exam ──────────────────────────────────────────────────────────────────
+    // ── Exam & Content ────────────────────────────────────────────────────────
     EXAM_NOT_FOUND(404, "Không tìm thấy đề thi"),
     EXAM_NOT_PUBLISHED(400, "Đề thi chưa được công bố"),
     SECTION_NOT_FOUND(404, "Không tìm thấy phần thi"),
     QUESTION_NOT_FOUND(404, "Không tìm thấy câu hỏi"),
+    VOCABULARY_NOT_FOUND(404, "Không tìm thấy từ vựng"),
+    EXERCISE_NOT_FOUND(404, "Không tìm thấy bài tập"),
 
     // ── Attempt ───────────────────────────────────────────────────────────────
     ATTEMPT_NOT_FOUND(404, "Không tìm thấy lần làm bài"),

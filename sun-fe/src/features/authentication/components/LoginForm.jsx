@@ -29,7 +29,7 @@ export default function LoginForm() {
         }
         localStorage.setItem('user', JSON.stringify(data.result.user))
         window.dispatchEvent(new Event('storage'))
-        
+
         // Kiểm tra role để chuyển hướng
         if (data.result.user && data.result.user.role === 'ADMIN') {
           navigate('/admin')

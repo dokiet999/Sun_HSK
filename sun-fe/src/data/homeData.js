@@ -30,12 +30,12 @@ export const features = [
 ]
 
 export const levels = [
-  { level: 'HSK 1', label: 'Cơ bản',    description: 'Làm quen tiếng Trung' },
-  { level: 'HSK 2', label: 'Sơ cấp',    description: 'Giao tiếp hằng ngày' },
+  { level: 'HSK 1', label: 'Cơ bản', description: 'Làm quen tiếng Trung' },
+  { level: 'HSK 2', label: 'Sơ cấp', description: 'Giao tiếp hằng ngày' },
   { level: 'HSK 3', label: 'Trung cấp', description: 'Mở rộng chủ đề' },
-  { level: 'HSK 4', label: 'Khá',        description: 'Đọc hiểu & giao tiếp' },
-  { level: 'HSK 5', label: 'Nâng cao',  description: 'Văn bản & học thuật' },
-  { level: 'HSK 6', label: 'Thành thạo',description: 'Tiếng Trung nâng cao' },
+  { level: 'HSK 4', label: 'Khá', description: 'Đọc hiểu & giao tiếp' },
+  { level: 'HSK 5', label: 'Nâng cao', description: 'Văn bản & học thuật' },
+  { level: 'HSK 6', label: 'Thành thạo', description: 'Tiếng Trung nâng cao' },
 ]
 
 export const studyCards = [
@@ -64,10 +64,38 @@ export const studyCards = [
 ]
 
 export const navLinks = [
-  { href: '/hsk-tests', label: 'HSK Online Test' },
-  { href: '#levels',   label: 'HSK 1–6' },
-  { href: '#study',    label: 'Luyện tập' },
-  { href: '#vocab',    label: 'Từ vựng' },
+  {
+    label: 'Online Test',
+    href: '/hsk-tests',
+    children: [
+      {
+        label: 'HSK 2.0 (Đề chuẩn Hanban)',
+        sublabel: 'Cấu trúc đề truyền thống 6 cấp',
+        href: '/hsk-tests',
+      },
+      {
+        label: 'HSK 3.0 (Thi máy iBT)',
+        sublabel: 'Mô phỏng thi máy tính CBT 3 bậc 9 cấp',
+        href: '/hsk-tests/hsk3',
+      },
+    ],
+  },
+  {
+    label: 'Từ vựng',
+    href: '/vocabulary/hsk2',
+    children: [
+      {
+        label: 'HSK 2.0 (Tiêu chuẩn 6 cấp)',
+        sublabel: 'Gồm 6 cấp độ truyền thống (HSK 1 – 6)',
+        href: '/vocabulary/hsk2',
+      },
+      {
+        label: 'HSK 3.0 (Chuẩn mới 9 cấp)',
+        sublabel: 'Gồm 7 bậc cấp độ (HSK 1 – HSK 7-9)',
+        href: '/vocabulary/hsk3',
+      },
+    ],
+  },
 ]
 
 export const heroScores = [

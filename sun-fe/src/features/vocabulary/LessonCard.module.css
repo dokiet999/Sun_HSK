@@ -1,0 +1,132 @@
+.card {
+  background: var(--white, #ffffff);
+  border: 1.5px solid var(--line, #dce8f6);
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(16, 70, 140, 0.04);
+  position: relative;
+}
+
+.card:hover {
+  border-color: var(--card-border, #bfdbfe);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(16, 70, 140, 0.08);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lessonBadge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--card-color, #2382f6);
+  background: var(--card-light, #f0f9ff);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #bae6fd);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusPill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.newPill {
+  color: var(--muted, #60708a);
+  background: #f1f5f9;
+}
+
+.inProgressPill {
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.completedPill {
+  color: #15803d;
+  background: #f0fdf4;
+}
+
+.title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text, #142033);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.wordMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--muted, #60708a);
+}
+
+.wordCount b {
+  color: var(--text, #142033);
+  font-weight: 700;
+}
+
+.learnedInfo {
+  font-size: 0.8rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--card-color, #2382f6);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.cardFooter {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line, #dce8f6);
+}
+
+.viewBtn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--card-light, #f0f9ff);
+  color: var(--card-color, #2382f6);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.viewBtn:hover {
+  background: var(--card-color, #2382f6);
+  color: #ffffff;
+}
+
+.arrowIcon {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.viewBtn:hover .arrowIcon {
+  transform: translateX(4px);
+}

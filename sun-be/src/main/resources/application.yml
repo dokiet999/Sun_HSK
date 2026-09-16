@@ -45,6 +45,17 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
 
+  # ==================== Web MVC / Problem Details (RFC 9457) ====================
+  mvc:
+    problemdetails:
+      enabled: true
+
+  # ==================== Spring Data Web ====================
+  data:
+    web:
+      pageable:
+        page-serialization-mode: via-dto
+
 # ==================== Server ====================
 server:
   port: ${PORT:${SERVER_PORT:8081}}
@@ -57,7 +68,7 @@ app:
     refresh-token-expiration: ${JWT_REFRESH_EXP:604800000} # 7 ngày (ms)
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   cors:
-    allowed-origins: ${CORS_ORIGINS:https://*.vercel.app,http://localhost:5173,http://localhost:3000}
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
   cookie:
     secure: ${COOKIE_SECURE:false}
     same-site: ${COOKIE_SAME_SITE:Lax}
@@ -84,4 +95,3 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
-

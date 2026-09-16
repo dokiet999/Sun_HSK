@@ -1,0 +1,130 @@
+.contentSection {
+  padding: 40px 0 80px 0;
+  background: #fafcff;
+  min-height: 480px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text, #142033);
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+
+.sectionTitle span {
+  color: var(--blue-600, #2382f6);
+}
+
+.sectionSubtitle {
+  font-size: 0.95rem;
+  color: var(--muted, #60708a);
+  margin-top: 6px;
+  max-width: 600px;
+}
+
+.lessonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Skeleton Loading */
+.loadingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.skeletonCard {
+  height: 180px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty State */
+.emptyBox {
+  text-align: center;
+  padding: 64px 24px;
+  background: var(--white, #ffffff);
+  border: 1.5px dashed var(--line, #dce8f6);
+  border-radius: 24px;
+  max-width: 580px;
+  margin: 32px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.emptyTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text, #142033);
+  margin-bottom: 8px;
+}
+
+.emptyDesc {
+  font-size: 0.95rem;
+  color: var(--muted, #60708a);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.switchBtn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--blue-600, #2382f6);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.switchBtn:hover {
+  background: var(--blue-700, #1769e0);
+  transform: translateY(-1px);
+}
+
+/* Error State */
+.errorBox {
+  text-align: center;
+  padding: 40px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  color: #b91c1c;
+}
+
+.retryBtn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
