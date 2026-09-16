@@ -28,6 +28,9 @@ public class DictionaryBasedTokenizationStrategy implements ChineseTokenizationS
     Map<Integer, Set<String>> dictionaryCache = new ConcurrentHashMap<>();
 
     private static final int MAX_WORD_LEN = 6;
+    private static final java.util.regex.Pattern PUNCT_PATTERN = java.util.regex.Pattern.compile(
+            "[\\s\\u3000-\\u303F\\uFF00-\\uFFEF\\u2000-\\u206F.,;:!?\"'()\\[\\]{}\\-—_]+"
+    );
 
     @Override
     public List<String> tokenize(String sentence, int hskLevel) {
@@ -35,50 +38,44 @@ public class DictionaryBasedTokenizationStrategy implements ChineseTokenizationS
             return List.of();
         }
 
-        // HSK 1: câu rất ngắn (3-5 chữ), ưu tiên tách ký tự hoặc cụm 2 chữ
-        if (hskLevel == 1) {
-            List<String> charTokens = characterLevelFallback.tokenize(sentence, hskLevel);
-            if (charTokens.size() <= 6) {
-                return charTokens;
-            }
+        Set<String> dict = getDictionaryForLevel(hskLevel);
+        if (dict.isEmpty()) {
+            return characterLevelFallback.tokenize(sentence, hskLevel);
         }
 
-        String clean = sentence.trim().replaceAll("[。？！!?,，\\s]+$", "");
-        Set<String> dict = getDictionaryForLevel(hskLevel);
-
-        if (dict.isEmpty()) {
-            return characterLevelFallback.tokenize(clean, hskLevel);
+        // Loại bỏ dấu câu và chia câu thành các mệnh đề
+        String clean = PUNCT_PATTERN.matcher(sentence.trim()).replaceAll(" ").trim();
+        if (clean.isEmpty()) {
+            return List.of();
         }
 
         List<String> tokens = new ArrayList<>();
-        int i = 0;
-        int n = clean.length();
+        String[] parts = clean.split("\\s+");
 
-        while (i < n) {
-            char currentChar = clean.charAt(i);
-            if (Character.isWhitespace(currentChar)) {
-                i++;
-                continue;
-            }
+        for (String part : parts) {
+            int i = 0;
+            int n = part.length();
 
-            // Thử match từ dài nhất đến ngắn nhất
-            int end = Math.min(i + MAX_WORD_LEN, n);
-            boolean matched = false;
+            while (i < n) {
+                // Thử match từ dài nhất đến ngắn nhất
+                int end = Math.min(i + MAX_WORD_LEN, n);
+                boolean matched = false;
 
-            for (int j = end; j > i + 1; j--) {
-                String sub = clean.substring(i, j);
-                if (dict.contains(sub)) {
-                    tokens.add(sub);
-                    i = j;
-                    matched = true;
-                    break;
+                for (int j = end; j > i + 1; j--) {
+                    String sub = part.substring(i, j);
+                    if (dict.contains(sub)) {
+                        tokens.add(sub);
+                        i = j;
+                        matched = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!matched) {
-                // Ký tự đơn lẻ
-                tokens.add(String.valueOf(currentChar));
-                i++;
+                if (!matched) {
+                    // Ký tự đơn lẻ
+                    tokens.add(String.valueOf(part.charAt(i)));
+                    i++;
+                }
             }
         }
 
@@ -89,12 +86,22 @@ public class DictionaryBasedTokenizationStrategy implements ChineseTokenizationS
         return dictionaryCache.computeIfAbsent(level, l -> {
             Set<String> set = new HashSet<>();
             // Lấy từ vựng tích lũy từ HSK 1 đến level hiện tại (giới hạn tối đa level 6)
-            int targetLevel = Math.min(level, 6);
+            int targetLevel = Math.min(Math.max(level, 1), 6);
             for (int lv = 1; lv <= targetLevel; lv++) {
                 List<Vocabulary> vocabs = vocabularyRepository.findByHskLevelOrderBySortOrderAsc(lv);
                 for (Vocabulary v : vocabs) {
                     if (v.getHanzi() != null && !v.getHanzi().isBlank()) {
-                        set.add(v.getHanzi().trim());
+                        String hanzi = v.getHanzi().trim();
+                        set.add(hanzi);
+                        // Nếu có ngoặc đơn tùy chọn như 差（一）点儿 -> thêm cả bản rút gọn và đầy đủ
+                        String cleanVariant = hanzi.replaceAll("[（(].*?[）)]", "").trim();
+                        if (!cleanVariant.isEmpty()) {
+                            set.add(cleanVariant);
+                        }
+                        String expandedVariant = hanzi.replaceAll("[（(]|[）)]", "").trim();
+                        if (!expandedVariant.isEmpty()) {
+                            set.add(expandedVariant);
+                        }
                     }
                 }
             }

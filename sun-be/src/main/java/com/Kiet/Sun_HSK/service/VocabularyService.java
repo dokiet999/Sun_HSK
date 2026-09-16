@@ -5,6 +5,7 @@ import com.Kiet.Sun_HSK.dto.response.VocabularyExampleResponse;
 import com.Kiet.Sun_HSK.dto.response.VocabularyResponse;
 import com.Kiet.Sun_HSK.entity.UserVocabulary;
 import com.Kiet.Sun_HSK.entity.Vocabulary;
+import com.Kiet.Sun_HSK.enums.HskVersion;
 import com.Kiet.Sun_HSK.exception.AppException;
 import com.Kiet.Sun_HSK.exception.ErrorCode;
 import com.Kiet.Sun_HSK.repository.UserVocabularyRepository;
@@ -28,13 +29,16 @@ public class VocabularyService {
 
     @Transactional(readOnly = true)
     public List<VocabularyResponse> getByLevel(int level, UUID userId) {
-        List<Vocabulary> vocabs = vocabularyRepository.findByHskLevelWithDetails(level);
+        return getByLevel(level, userId, null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<VocabularyResponse> getByLevel(int level, UUID userId, HskVersion version) {
+        List<Vocabulary> vocabs = vocabularyRepository.findByHskLevelAndHskVersionWithDetails(level, version);
 
         // Nếu user đã đăng nhập, lấy kèm trạng thái học tập của user
         Map<Long, UserVocabulary> userVocabMap = new HashMap<>();
         if (userId != null) {
-            List<UserVocabulary> userVocabs = userVocabularyRepository.findByUserIdAndStatus(userId, null);
-            // lấy tất cả user_vocabularies của user
             for (Vocabulary v : vocabs) {
                 userVocabularyRepository.findByUserIdAndVocabularyId(userId, v.getId())
                         .ifPresent(uv -> userVocabMap.put(v.getId(), uv));
@@ -61,27 +65,32 @@ public class VocabularyService {
 
     /**
      * Lấy tổng quan danh sách bài học của một HSK level (ví dụ chia 10 từ/bài),
-     * kèm tiến độ học tập của từng bài cho user.
+     * kèm tiến độ học tập của từng bài cho user. Hỗ trợ lọc theo hskVersion.
      */
     @Transactional(readOnly = true)
     public com.Kiet.Sun_HSK.dto.response.LessonOverviewResponse getLessonOverview(int level, int pageSize, UUID userId) {
+        return getLessonOverview(level, pageSize, userId, null);
+    }
+
+    @Transactional(readOnly = true)
+    public com.Kiet.Sun_HSK.dto.response.LessonOverviewResponse getLessonOverview(int level, int pageSize, UUID userId, HskVersion version) {
         if (pageSize <= 0) pageSize = 10;
 
         Map<Long, com.Kiet.Sun_HSK.enums.VocabularyLearningStatus> userStatusMap = new HashMap<>();
         if (userId != null) {
-            List<Object[]> rows = userVocabularyRepository.findStatusMapByUserIdAndLevel(userId, level);
+            List<Object[]> rows = userVocabularyRepository.findStatusMapByUserIdAndLevelAndVersion(userId, level, version);
             for (Object[] row : rows) {
                 userStatusMap.put((Long) row[0], (com.Kiet.Sun_HSK.enums.VocabularyLearningStatus) row[1]);
             }
         }
 
-        List<Integer> distinctLessons = vocabularyRepository.findDistinctLessonNumbersByHskLevel(level);
+        List<Integer> distinctLessons = vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(level, version);
         if (!distinctLessons.isEmpty()) {
             List<com.Kiet.Sun_HSK.dto.response.LessonSummaryResponse> lessonSummaries = new ArrayList<>();
             long totalWords = 0;
 
             for (Integer lessonNum : distinctLessons) {
-                List<Long> lessonIds = vocabularyRepository.findIdsByHskLevelAndLessonNumber(level, lessonNum);
+                List<Long> lessonIds = vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(level, lessonNum, version);
                 totalWords += lessonIds.size();
                 int totalInLesson = lessonIds.size();
                 int learned = 0;
@@ -122,7 +131,7 @@ public class VocabularyService {
                     .build();
         }
 
-        List<Long> allIds = vocabularyRepository.findIdsByHskLevel(level);
+        List<Long> allIds = vocabularyRepository.findIdsByHskLevelAndHskVersion(level, version);
         long totalWords = allIds.size();
         int totalLessons = (int) Math.ceil((double) totalWords / pageSize);
 
@@ -170,25 +179,31 @@ public class VocabularyService {
     }
 
     /**
-     * Lấy danh sách từ vựng chi tiết của một bài học (theo lessonNumber và pageSize).
+     * Lấy danh sách từ vựng chi tiết của một bài học (theo lessonNumber và pageSize, có lọc theo hskVersion).
      */
     @Transactional(readOnly = true)
     public com.Kiet.Sun_HSK.dto.response.LessonVocabularyResponse getWordsByLesson(
             int level, int lessonNumber, int pageSize, UUID userId) {
+        return getWordsByLesson(level, lessonNumber, pageSize, userId, null);
+    }
+
+    @Transactional(readOnly = true)
+    public com.Kiet.Sun_HSK.dto.response.LessonVocabularyResponse getWordsByLesson(
+            int level, int lessonNumber, int pageSize, UUID userId, HskVersion version) {
         if (pageSize <= 0) pageSize = 10;
         if (lessonNumber < 1) lessonNumber = 1;
 
-        List<Integer> distinctLessons = vocabularyRepository.findDistinctLessonNumbersByHskLevel(level);
+        List<Integer> distinctLessons = vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(level, version);
         List<Long> lessonIds;
         int totalLessons;
         int wordsPerLesson;
 
         if (!distinctLessons.isEmpty()) {
             totalLessons = distinctLessons.size();
-            lessonIds = vocabularyRepository.findIdsByHskLevelAndLessonNumber(level, lessonNumber);
+            lessonIds = vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(level, lessonNumber, version);
             wordsPerLesson = lessonIds.size();
         } else {
-            List<Long> allIds = vocabularyRepository.findIdsByHskLevel(level);
+            List<Long> allIds = vocabularyRepository.findIdsByHskLevelAndHskVersion(level, version);
             long totalWords = allIds.size();
             totalLessons = (int) Math.ceil((double) totalWords / pageSize);
             wordsPerLesson = pageSize;
@@ -242,15 +257,20 @@ public class VocabularyService {
      */
     @Transactional(readOnly = true)
     public List<Long> getLessonWordIds(int level, int lessonNumber, int pageSize) {
-        List<Integer> distinctLessons = vocabularyRepository.findDistinctLessonNumbersByHskLevel(level);
+        return getLessonWordIds(level, lessonNumber, pageSize, null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> getLessonWordIds(int level, int lessonNumber, int pageSize, HskVersion version) {
+        List<Integer> distinctLessons = vocabularyRepository.findDistinctLessonNumbersByHskLevelAndHskVersion(level, version);
         if (!distinctLessons.isEmpty()) {
-            return vocabularyRepository.findIdsByHskLevelAndLessonNumber(level, lessonNumber);
+            return vocabularyRepository.findIdsByHskLevelAndLessonNumberAndHskVersion(level, lessonNumber, version);
         }
 
         if (pageSize <= 0) pageSize = 10;
         if (lessonNumber < 1) lessonNumber = 1;
 
-        List<Long> allIds = vocabularyRepository.findIdsByHskLevel(level);
+        List<Long> allIds = vocabularyRepository.findIdsByHskLevelAndHskVersion(level, version);
         int start = (lessonNumber - 1) * pageSize;
         if (start >= allIds.size()) {
             return Collections.emptyList();

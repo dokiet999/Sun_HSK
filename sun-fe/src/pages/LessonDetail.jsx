@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { getLevelConfig, formatPos } from '../data/vocabData';
 import { vocabularyService } from '../services/vocabularyService';
 import { playChineseAudio } from '../utils/audioPlayer';
@@ -29,9 +29,16 @@ function renderHighlightedZh(text, targetWord, highlightClass) {
 export default function LessonDetail() {
   const { level: levelParam, lessonNumber: lessonNumberParam } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isHsk3 = location.pathname.includes('/hsk3');
+  const hskVersionParam = isHsk3 ? 'HSK_3' : 'HSK_2';
+  const versionSlug = isHsk3 ? 'hsk3' : 'hsk2';
 
   const currentLevel = getLevelConfig(levelParam || '1');
   const lessonNumber = parseInt(lessonNumberParam, 10) || 1;
+
+  const basePath = `/vocabulary/${versionSlug}/${currentLevel.slug}`;
 
   const [lessonData, setLessonData] = useState(null);
   const [words, setWords] = useState([]);
@@ -56,7 +63,7 @@ export default function LessonDetail() {
       try {
         setLoading(true);
         setError(null);
-        const res = await vocabularyService.getWordsByLesson(currentLevel.id, lessonNumber, 50);
+        const res = await vocabularyService.getWordsByLesson(currentLevel.id, lessonNumber, 50, hskVersionParam);
         if (isMounted) {
           if (res && res.result) {
             setLessonData(res.result);
@@ -94,7 +101,7 @@ export default function LessonDetail() {
     return () => {
       isMounted = false;
     };
-  }, [currentLevel.id, lessonNumber]);
+  }, [currentLevel.id, lessonNumber, hskVersionParam]);
 
   // Click outside listener for dropdown
   useEffect(() => {
@@ -166,14 +173,42 @@ export default function LessonDetail() {
 
   // Cập nhật trạng thái học tập
   const handleStatusChange = async (wordId, status) => {
+    const token = localStorage.getItem('token');
+    const word = words.find((w) => w.id === wordId);
+
     setWords((prev) =>
       prev.map((w) => (w.id === wordId ? { ...w, userStatus: status } : w))
     );
+
+    const labelMap = {
+      NEW: 'Chưa học',
+      LEARNING: 'Đang học',
+      REVIEWING: 'Đang ôn',
+      MASTERED: 'Đã thuộc'
+    };
+
+    if (!token) {
+      setToast(`Đã chuyển "${word?.hanzi || ''}" sang: ${labelMap[status] || status} (Đăng nhập để lưu tiến độ)`);
+      return;
+    }
+
+    setToast(`Đã chuyển "${word?.hanzi || ''}" sang: ${labelMap[status] || status}`);
+
     try {
       await vocabularyService.updateStatus(wordId, status);
     } catch (err) {
       console.error('Lỗi update status:', err);
     }
+  };
+
+  // Chuyển đổi nhanh trạng thái: Chưa học -> Đang học -> Đã thuộc -> Chưa học
+  const handleCycleStatus = (word) => {
+    const current = word.userStatus || 'NEW';
+    let nextStatus = 'LEARNING';
+    if (current === 'NEW') nextStatus = 'LEARNING';
+    else if (current === 'LEARNING' || current === 'REVIEWING') nextStatus = 'MASTERED';
+    else if (current === 'MASTERED') nextStatus = 'NEW';
+    handleStatusChange(word.id, nextStatus);
   };
 
   // Ẩn / hiện nghĩa của 1 từ
@@ -208,7 +243,7 @@ export default function LessonDetail() {
   };
 
   // Số liệu thống kê
-  const learnedCount = words.filter((w) => w.userStatus === 'MASTERED' || w.userStatus === 'LEARNING').length;
+  const learnedCount = words.filter((w) => w.userStatus && w.userStatus !== 'NEW').length;
   const newCount = words.filter((w) => !w.userStatus || w.userStatus === 'NEW').length;
   const bookmarkedCount = words.filter((w) => w.inReviewList).length;
 
@@ -245,7 +280,7 @@ export default function LessonDetail() {
           <div className={styles.headerLeft}>
             <button
               className={styles.iconBtn}
-              onClick={() => navigate(`/vocabulary/${currentLevel.slug}`)}
+              onClick={() => navigate(basePath)}
               aria-label="Quay lại danh sách bài học"
               title="Quay lại danh sách bài học"
             >
@@ -256,9 +291,11 @@ export default function LessonDetail() {
               <span className={styles.brandText}>Sun HSK</span>
             </Link>
             <div className={styles.headerBreadcrumbs}>
-              <Link to="/vocabulary" className={styles.crumbLink}>Từ vựng</Link>
+              <Link to={isHsk3 ? "/vocabulary/hsk3" : "/vocabulary/hsk2"} className={styles.crumbLink}>
+                Từ vựng {isHsk3 ? 'HSK 3.0' : 'HSK 2.0'}
+              </Link>
               <span>/</span>
-              <Link to={`/vocabulary/${currentLevel.slug}`} className={styles.crumbLink}>{currentLevel.label}</Link>
+              <Link to={basePath} className={styles.crumbLink}>{currentLevel.label}</Link>
               <span>/</span>
               <span>Bài {lessonNumber}</span>
             </div>
@@ -278,9 +315,10 @@ export default function LessonDetail() {
           <div className={styles.study} ref={menuRef}>
             <button
               className={styles.studyMain}
-              onClick={() => setToast('✨ Chế độ Flashcard lặp lại ngắt quãng (SRS) sẽ mở trong bước tới!')}
+              onClick={() => navigate(`${basePath}/lesson/${lessonNumber}/flashcard`)}
+              title="Bắt đầu học từ vựng bằng thẻ Flashcard"
             >
-              ⚡ Học ngay
+              ⚡ Học Flashcard
             </button>
             <button
               className={styles.studyMore}
@@ -297,10 +335,19 @@ export default function LessonDetail() {
                   className={styles.dropdownItem}
                   onClick={() => {
                     setShowStudyMenu(false);
-                    setToast('Chế độ học Flashcard đang chuẩn bị sẵn sàng!');
+                    navigate(`${basePath}/lesson/${lessonNumber}/flashcard`);
                   }}
                 >
                   🎴 Học theo Flashcard (SRS)
+                </button>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    setShowStudyMenu(false);
+                    navigate(`${basePath}/lesson/${lessonNumber}/exercise`);
+                  }}
+                >
+                  ✏️ Luyện bài tập từ vựng
                 </button>
                 <button
                   className={styles.dropdownItem}
@@ -323,6 +370,17 @@ export default function LessonDetail() {
               </div>
             )}
           </div>
+
+          {/* Luyện bài tập */}
+          <button
+            type="button"
+            className={styles.playAllBtn}
+            onClick={() => navigate(`${basePath}/lesson/${lessonNumber}/exercise`)}
+            title="Luyện bài tập điền từ, sắp xếp câu và nghe"
+            style={{ fontWeight: 600, color: '#1d4ed8', borderColor: '#93c5fd', background: '#eff6ff' }}
+          >
+            ✏️ Luyện bài tập
+          </button>
 
           {/* Nghe tất cả */}
           <button
@@ -481,6 +539,27 @@ export default function LessonDetail() {
                     </div>
 
                     <div className={styles.topActions}>
+                      {/* Trạng thái học tập */}
+                      <button
+                        type="button"
+                        className={`${styles.statusBadgeBtn} ${
+                          word.userStatus === 'MASTERED'
+                            ? styles.statusBadgeMastered
+                            : word.userStatus === 'REVIEWING'
+                            ? styles.statusBadgeReviewing
+                            : word.userStatus === 'LEARNING'
+                            ? styles.statusBadgeLearning
+                            : styles.statusBadgeNew
+                        }`}
+                        onClick={() => handleCycleStatus(word)}
+                        title="Click để đổi trạng thái học tập (Chưa học → Đang học → Đã thuộc)"
+                      >
+                        {word.userStatus === 'MASTERED' && '✓ Đã thuộc'}
+                        {word.userStatus === 'REVIEWING' && '🔄 Đang ôn'}
+                        {word.userStatus === 'LEARNING' && '📖 Đang học'}
+                        {(!word.userStatus || word.userStatus === 'NEW') && '○ Chưa học'}
+                      </button>
+
                       <button
                         className={`${styles.audio} ${playingWordId === word.id ? styles.audioActive : ''}`}
                         onClick={() => handlePlayWord(word)}
@@ -575,14 +654,14 @@ export default function LessonDetail() {
           {lessonNumber > 1 ? (
             <button
               className={styles.navBtn}
-              onClick={() => navigate(`/vocabulary/${currentLevel.slug}/lesson/${lessonNumber - 1}`)}
+              onClick={() => navigate(`${basePath}/lesson/${lessonNumber - 1}`)}
             >
               ← Bài trước ({lessonNumber - 1})
             </button>
           ) : <div />}
 
           <Link
-            to={`/vocabulary/${currentLevel.slug}`}
+            to={basePath}
             className={styles.backLink}
           >
             Quay lại danh sách bài học {currentLevel.label}
@@ -591,7 +670,7 @@ export default function LessonDetail() {
           {lessonNumber < totalLessons ? (
             <button
               className={styles.navBtn}
-              onClick={() => navigate(`/vocabulary/${currentLevel.slug}/lesson/${lessonNumber + 1}`)}
+              onClick={() => navigate(`${basePath}/lesson/${lessonNumber + 1}`)}
             >
               Bài tiếp theo ({lessonNumber + 1}) →
             </button>

@@ -31,7 +31,23 @@ public class FillBlankGenerator {
         String hanzi = vocab.getHanzi().trim();
         String zh = example.getZh().trim();
 
-        if (!zh.contains(hanzi)) {
+        String target = null;
+        if (zh.contains(hanzi)) {
+            target = hanzi;
+        } else {
+            // Thử trường hợp có ngoặc đơn tùy chọn như 差（一）点儿
+            String clean = hanzi.replaceAll("[（(].*?[）)]", "").trim();
+            if (!clean.isEmpty() && zh.contains(clean)) {
+                target = clean;
+            } else {
+                String expanded = hanzi.replaceAll("[（(]|[）)]", "").trim();
+                if (!expanded.isEmpty() && zh.contains(expanded)) {
+                    target = expanded;
+                }
+            }
+        }
+
+        if (target == null) {
             return Optional.empty();
         }
 
@@ -42,16 +58,16 @@ public class FillBlankGenerator {
                 .vocabulary(vocab)
                 .example(example)
                 .difficulty(1)
-                .explanation("Từ cần điền: " + hanzi + " (" + vocab.getPinyin() + " - " + vocab.getMeaningVi() + ")")
+                .explanation("Từ cần điền: " + target + " (" + vocab.getPinyin() + " - " + vocab.getMeaningVi() + ")")
                 .build();
         Exercise savedExercise = exerciseRepository.save(exercise);
 
         // Tạo bài tập con FillBlankExercise
-        String blankText = zh.replaceFirst(Pattern.quote(hanzi), "____");
+        String blankText = zh.replaceFirst(Pattern.quote(target), "____");
         FillBlankExercise fillBlank = FillBlankExercise.builder()
                 .exercise(savedExercise)
                 .blankText(blankText)
-                .answer(hanzi)
+                .answer(target)
                 .build();
 
         return Optional.of(fillBlankExerciseRepository.save(fillBlank));

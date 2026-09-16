@@ -1,4 +1,4 @@
-:root {
+.page {
   --text: #1f2933;
   --muted: #667085;
   --border: #e5e7eb;
@@ -6,12 +6,10 @@
   --primary-dark: #c93f3f;
   --soft: #fff5f5;
   --success: #e9f8ef;
-  --success-text: #20844a;
+  --success-text: #15803d;
   --bg: #fff;
   --shadow: 0 10px 30px rgba(31, 41, 51, 0.08);
-}
 
-.page {
   min-height: 100vh;
   background: #f7f8fa;
 }
@@ -194,7 +192,7 @@
 
 .studyMain {
   border: 0;
-  background: var(--primary);
+  background: #e14c4c;
   color: #fff;
   cursor: pointer;
   padding: 0 22px;
@@ -204,16 +202,18 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(225, 76, 76, 0.2);
 }
 
 .studyMain:hover {
-  background: var(--primary-dark);
+  background: #c93f3f;
+  box-shadow: 0 4px 12px rgba(225, 76, 76, 0.3);
 }
 
 .studyMore {
   border: 0;
-  background: var(--primary);
+  background: #e14c4c;
   color: #fff;
   cursor: pointer;
   width: 46px;
@@ -222,11 +222,12 @@
   font-size: 18px;
   display: grid;
   place-items: center;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(225, 76, 76, 0.2);
 }
 
 .studyMore:hover {
-  background: var(--primary-dark);
+  background: #c93f3f;
 }
 
 .studyDropdown {
@@ -294,35 +295,38 @@
 /* Status tags */
 .status {
   display: flex;
-  gap: 8px;
-  margin-top: 18px;
+  gap: 10px;
+  margin-top: 20px;
   flex-wrap: wrap;
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
-  padding: 7px 12px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13.5px;
   line-height: 20px;
-  font-weight: 500;
+  font-weight: 600;
+  transition: all 0.15s ease;
 }
 
 .tagSuccess {
-  background: var(--success);
-  color: var(--success-text);
-  font-weight: 600;
+  background: #e9f8ef;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
 .tagNeutral {
-  background: #f2f4f7;
-  color: #667085;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
 .tagBookmark {
   background: #fffbeb;
   color: #b45309;
+  border: 1px solid #fef3c7;
 }
 
 /* Toolbar */
@@ -498,13 +502,15 @@
 }
 
 .term {
-  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  font-size: 24px;
-  line-height: 30px;
-  font-weight: 700;
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', 'Kaiti SC', '楷体', 'Noto Serif SC', serif;
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: 500;
   margin: 0;
   color: var(--text);
   letter-spacing: 0.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .posTag {
@@ -536,7 +542,63 @@
 .topActions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+}
+
+.statusBadgeBtn {
+  height: 34px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.statusBadgeNew {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+.statusBadgeNew:hover {
+  background: #e2e8f0;
+  color: #334155;
+  transform: translateY(-1px);
+}
+
+.statusBadgeLearning {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.statusBadgeLearning:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+}
+
+.statusBadgeReviewing {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fde68a;
+}
+.statusBadgeReviewing:hover {
+  background: #fde68a;
+  transform: translateY(-1px);
+}
+
+.statusBadgeMastered {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+.statusBadgeMastered:hover {
+  background: #d1fae5;
+  transform: translateY(-1px);
 }
 
 .audio {
@@ -681,11 +743,14 @@
 }
 
 .exampleZh {
-  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', 'Kaiti SC', '楷体', 'Noto Serif SC', serif;
+  font-size: 17px;
+  line-height: 28px;
+  font-weight: 500;
   color: var(--text);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .exampleAudioBtn {
@@ -766,13 +831,15 @@
 }
 
 .hanziArt {
-  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  font-size: 38px;
-  font-weight: 800;
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', 'Kaiti SC', '楷体', 'Noto Serif SC', serif;
+  font-size: 42px;
+  font-weight: 400;
   color: var(--text);
   line-height: 1;
   z-index: 2;
   letter-spacing: 2px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .pinyinArt {

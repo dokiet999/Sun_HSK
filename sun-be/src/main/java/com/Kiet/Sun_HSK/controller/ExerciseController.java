@@ -36,7 +36,7 @@ public class ExerciseController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<ExerciseResponse>>> getExercises(
             @RequestParam(defaultValue = "1") int level,
-            @RequestParam(defaultValue = "FILL_BLANK") ExerciseType type,
+            @RequestParam(required = false) ExerciseType type,
             @RequestParam(required = false) Integer lesson,
             @RequestParam(defaultValue = "10") int pageSize
     ) {

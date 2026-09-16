@@ -30,6 +30,13 @@ public class ExerciseService {
     UserRepository userRepository;
     VocabularyService vocabularyService;
 
+    private static final String PUNCT_REGEX = "[\\p{Punct}\\s\\u3000-\\u303F\\uFF00-\\uFFEF\\u2000-\\u206F]+";
+
+    private String normalizeChinese(String input) {
+        if (input == null) return "";
+        return input.replaceAll(PUNCT_REGEX, "").trim();
+    }
+
     @Transactional(readOnly = true)
     public List<ExerciseResponse> getByLevelAndType(int level, ExerciseType type, Integer lessonNumber, int pageSize) {
         List<Exercise> exercises;
@@ -38,9 +45,17 @@ public class ExerciseService {
             if (vocabIds.isEmpty()) {
                 return Collections.emptyList();
             }
-            exercises = exerciseRepository.findByVocabularyIdInAndExerciseTypeWithDetails(vocabIds, type);
+            if (type != null) {
+                exercises = exerciseRepository.findByVocabularyIdInAndExerciseTypeWithDetails(vocabIds, type);
+            } else {
+                exercises = exerciseRepository.findByVocabularyIdInWithDetails(vocabIds);
+            }
         } else {
-            exercises = exerciseRepository.findByLevelAndTypeWithDetails(level, type);
+            if (type != null) {
+                exercises = exerciseRepository.findByLevelAndTypeWithDetails(level, type);
+            } else {
+                exercises = exerciseRepository.findByLevelWithDetails(level);
+            }
         }
 
         return exercises.stream()
@@ -63,7 +78,8 @@ public class ExerciseService {
             FillBlankExercise fb = fillBlankExerciseRepository.findByExerciseId(exerciseId)
                     .orElseThrow(() -> new AppException(ErrorCode.EXERCISE_NOT_FOUND));
             correctAnswer = fb.getAnswer();
-            correct = req.getUserAnswer() != null && req.getUserAnswer().trim().equalsIgnoreCase(correctAnswer.trim());
+            String submitted = req.getUserAnswer() != null ? req.getUserAnswer().trim() : "";
+            correct = submitted.equalsIgnoreCase(correctAnswer.trim());
         } else if (exercise.getExerciseType() == ExerciseType.SENTENCE_ORDERING) {
             SentenceOrderingExercise ordering = sentenceOrderingExerciseRepository.findByExerciseIdWithTokens(exerciseId)
                     .orElseThrow(() -> new AppException(ErrorCode.EXERCISE_NOT_FOUND));
@@ -73,16 +89,18 @@ public class ExerciseService {
                     .map(SentenceOrderingToken::getToken)
                     .collect(Collectors.joining(""));
 
-            String submitted = req.getUserAnswer() != null ? req.getUserAnswer().replaceAll("\\s+", "") : "";
-            correct = submitted.equals(correctAnswer.replaceAll("\\s+", ""));
+            String submitted = normalizeChinese(req.getUserAnswer());
+            String expected = normalizeChinese(correctAnswer);
+            correct = !submitted.isEmpty() && submitted.equals(expected);
         } else if (exercise.getExerciseType() == ExerciseType.LISTENING) {
             if (exercise.getExample() != null) {
                 correctAnswer = exercise.getExample().getZh();
             } else {
                 correctAnswer = exercise.getVocabulary().getHanzi();
             }
-            String submitted = req.getUserAnswer() != null ? req.getUserAnswer().replaceAll("\\s+", "") : "";
-            correct = submitted.equalsIgnoreCase(correctAnswer.replaceAll("\\s+", ""));
+            String submitted = normalizeChinese(req.getUserAnswer());
+            String expected = normalizeChinese(correctAnswer);
+            correct = !submitted.isEmpty() && submitted.equalsIgnoreCase(expected);
         }
 
         UserExerciseAttempt attempt = UserExerciseAttempt.builder()

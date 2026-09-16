@@ -50,6 +50,12 @@ spring:
     problemdetails:
       enabled: true
 
+  # ==================== Spring Data Web ====================
+  data:
+    web:
+      pageable:
+        page-serialization-mode: via-dto
+
 # ==================== Server ====================
 server:
   port: ${PORT:${SERVER_PORT:8081}}

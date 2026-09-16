@@ -1,6 +1,7 @@
 package com.Kiet.Sun_HSK.repository;
 
 import com.Kiet.Sun_HSK.entity.UserVocabulary;
+import com.Kiet.Sun_HSK.enums.HskVersion;
 import com.Kiet.Sun_HSK.enums.VocabularyLearningStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -42,8 +43,16 @@ public interface UserVocabularyRepository extends JpaRepository<UserVocabulary, 
 
     @Query("SELECT uv.vocabulary.id, uv.status FROM UserVocabulary uv " +
            "JOIN uv.vocabulary v " +
-           "WHERE uv.user.id = :userId AND v.hskLevel = :level")
-    List<Object[]> findStatusMapByUserIdAndLevel(@Param("userId") UUID userId, @Param("level") int level);
+           "WHERE uv.user.id = :userId AND v.hskLevel = :level AND (:version IS NULL OR v.hskVersion = :version)")
+    List<Object[]> findStatusMapByUserIdAndLevelAndVersion(
+            @Param("userId") UUID userId,
+            @Param("level") int level,
+            @Param("version") HskVersion version
+    );
+
+    default List<Object[]> findStatusMapByUserIdAndLevel(UUID userId, int level) {
+        return findStatusMapByUserIdAndLevelAndVersion(userId, level, null);
+    }
 
     @Query("SELECT uv FROM UserVocabulary uv " +
            "WHERE uv.user.id = :userId AND uv.vocabulary.id IN :vocabIds")

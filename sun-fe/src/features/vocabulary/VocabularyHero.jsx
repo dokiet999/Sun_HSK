@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './VocabularyHero.module.css';
 
-export default function VocabularyHero({ levelConfig, stats, loading }) {
+export default function VocabularyHero({ levelConfig, stats, loading, version = 'hsk2' }) {
   const { label, sublabel, wordsCount, description, color, colorLight, colorBorder, colorBadge, tags, icon } = levelConfig;
 
   const totalWords = stats?.totalWords ?? 0;
@@ -9,6 +9,8 @@ export default function VocabularyHero({ levelConfig, stats, loading }) {
   const learnedWords = stats?.learnedWords ?? 0;
   const masteredWords = stats?.masteredWords ?? 0;
   const progressPercent = stats?.progressPercent ?? 0;
+
+  const versionLabel = version === 'hsk3' ? 'HSK 3.0' : 'HSK 2.0';
 
   return (
     <section
@@ -27,13 +29,13 @@ export default function VocabularyHero({ levelConfig, stats, loading }) {
             <div className={styles.badgeRow}>
               <span className={styles.levelPill}>
                 <span className={styles.icon}>{icon}</span>
-                {label} · {sublabel}
+                {versionLabel} · {label} · {sublabel}
               </span>
               <span className={styles.vocabCountBadge}>{wordsCount}</span>
             </div>
 
             <h1 className={styles.title}>
-              Kho Từ vựng <span>{label}</span>
+              Kho Từ vựng {versionLabel} <span>{label}</span>
             </h1>
 
             <p className={styles.description}>{description}</p>

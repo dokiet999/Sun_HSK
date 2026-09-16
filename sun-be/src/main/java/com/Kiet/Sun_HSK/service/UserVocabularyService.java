@@ -75,6 +75,34 @@ public class UserVocabularyService {
         return mapToResponse(userVocabularyRepository.save(userVocab));
     }
 
+    @Transactional
+    public UserVocabularyResponse updateStatus(UUID userId, Long vocabId, VocabularyLearningStatus status) {
+        User user = getUser(userId);
+        Vocabulary vocab = getVocabulary(vocabId);
+
+        UserVocabulary userVocab = userVocabularyRepository.findByUserIdAndVocabularyId(userId, vocabId)
+                .orElseGet(() -> UserVocabulary.builder()
+                        .user(user)
+                        .vocabulary(vocab)
+                        .inReviewList(false)
+                        .reviewCount(0)
+                        .correctCount(0)
+                        .wrongCount(0)
+                        .build());
+
+        userVocab.setStatus(status);
+        userVocab.setLastReviewedAt(LocalDateTime.now());
+        if (status == VocabularyLearningStatus.MASTERED) {
+            userVocab.setReviewCount(Math.max(userVocab.getReviewCount(), 5));
+            userVocab.setNextReviewAt(LocalDateTime.now().plusDays(30));
+        } else if (status == VocabularyLearningStatus.LEARNING) {
+            userVocab.setNextReviewAt(LocalDateTime.now().plusDays(1));
+        } else if (status == VocabularyLearningStatus.REVIEWING) {
+            userVocab.setNextReviewAt(LocalDateTime.now().plusDays(3));
+        }
+        return mapToResponse(userVocabularyRepository.save(userVocab));
+    }
+
     /**
      * Ghi nhận đánh giá độ nhớ thẻ flashcard (SRS).
      * Rating: 1 = Again (Quên), 2 = Hard (Khó), 3 = Good (Nhớ tốt), 4 = Easy (Dễ)

@@ -36,12 +36,13 @@ public class SentenceOrderingGenerator {
         }
 
         // 1. Tạo Exercise cha
+        int difficulty = tokens.size() <= 3 ? 1 : (tokens.size() <= 5 ? 2 : 3);
         Exercise exercise = Exercise.builder()
                 .exerciseType(ExerciseType.SENTENCE_ORDERING)
                 .hskLevel(vocab.getHskLevel())
                 .vocabulary(vocab)
                 .example(example)
-                .difficulty(2)
+                .difficulty(difficulty)
                 .explanation("Câu hoàn chỉnh: " + example.getZh() + " (" + example.getVi() + ")")
                 .build();
         Exercise savedExercise = exerciseRepository.save(exercise);

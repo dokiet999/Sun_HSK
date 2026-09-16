@@ -1,16 +1,21 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { HSK_VOCAB_LEVELS } from '../../data/vocabData';
 import styles from './LevelTabs.module.css';
 
-export default function LevelTabs({ currentLevelId }) {
+export default function LevelTabs({ currentLevelId, version = 'hsk2', basePath = '/vocabulary' }) {
   const navigate = useNavigate();
+
+  // HSK 2.0 chỉ có 6 cấp độ (HSK 1 - 6), HSK 3.0 có 7 cấp độ (bao gồm cả HSK 7-9)
+  const displayLevels = version === 'hsk2'
+    ? HSK_VOCAB_LEVELS.slice(0, 6)
+    : HSK_VOCAB_LEVELS;
 
   return (
     <div className={styles.container}>
       <div className={styles.scrollWrapper}>
         <div className={styles.tabsList} role="tablist">
-          {HSK_VOCAB_LEVELS.map((level) => {
+          {displayLevels.map((level) => {
             const isActive = level.id === currentLevelId;
             return (
               <button
@@ -24,7 +29,7 @@ export default function LevelTabs({ currentLevelId }) {
                   '--level-border': level.colorBorder,
                   '--level-badge': level.colorBadge
                 }}
-                onClick={() => navigate(`/vocabulary/${level.slug}`)}
+                onClick={() => navigate(`${basePath}/${level.slug}`)}
               >
                 <span className={styles.tabIcon}>{level.icon}</span>
                 <div className={styles.tabInfo}>

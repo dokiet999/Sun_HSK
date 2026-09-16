@@ -59,4 +59,18 @@ public class ExerciseGenerationService {
         log.info("Đã sinh thành công {} bài tập cho HSK level {}", count, level);
         return count;
     }
+
+    @Transactional
+    public int generateAllLevels() {
+        List<Object[]> levelCounts = vocabularyRepository.countGroupByHskLevel();
+        int total = 0;
+        for (Object[] row : levelCounts) {
+            Integer level = (Integer) row[0];
+            if (level != null && level > 0) {
+                total += generateForLevel(level);
+            }
+        }
+        log.info("Đã sinh tổng cộng {} bài tập cho tất cả cấp độ HSK", total);
+        return total;
+    }
 }

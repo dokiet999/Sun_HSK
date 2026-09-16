@@ -31,6 +31,18 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     @Query("SELECT e FROM Exercise e " +
            "JOIN FETCH e.vocabulary v " +
            "LEFT JOIN FETCH e.example ex " +
+           "WHERE e.hskLevel = :level")
+    List<Exercise> findByLevelWithDetails(@Param("level") int level);
+
+    @Query("SELECT e FROM Exercise e " +
+           "JOIN FETCH e.vocabulary v " +
+           "LEFT JOIN FETCH e.example ex " +
            "WHERE e.vocabulary.id IN :vocabIds AND e.exerciseType = :type")
     List<Exercise> findByVocabularyIdInAndExerciseTypeWithDetails(@Param("vocabIds") List<Long> vocabIds, @Param("type") ExerciseType type);
+
+    @Query("SELECT e FROM Exercise e " +
+           "JOIN FETCH e.vocabulary v " +
+           "LEFT JOIN FETCH e.example ex " +
+           "WHERE e.vocabulary.id IN :vocabIds")
+    List<Exercise> findByVocabularyIdInWithDetails(@Param("vocabIds") List<Long> vocabIds);
 }

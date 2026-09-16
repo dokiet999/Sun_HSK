@@ -59,6 +59,21 @@ public class UserVocabularyController {
     }
 
     /**
+     * PATCH /api/v1/me/vocabulary/{vocabId}/status?status=MASTERED
+     * Trực tiếp cập nhật trạng thái học tập của từ vựng (NEW, LEARNING, REVIEWING, MASTERED).
+     */
+    @PatchMapping("/{vocabId}/status")
+    public ResponseEntity<ApiResponse<UserVocabularyResponse>> updateStatus(
+            @PathVariable Long vocabId,
+            @RequestParam com.Kiet.Sun_HSK.enums.VocabularyLearningStatus status,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        User user = userService.findByEmailOrThrow(userDetails.getUsername());
+        UserVocabularyResponse response = userVocabularyService.updateStatus(user.getId(), vocabId, status);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái thành công", response));
+    }
+
+    /**
      * POST /api/v1/me/vocabulary/{vocabId}/review?rating=3
      * Đánh giá độ nhớ thẻ flashcard theo Spaced Repetition (1: Quên, 2: Khó, 3: Tốt, 4: Dễ).
      */

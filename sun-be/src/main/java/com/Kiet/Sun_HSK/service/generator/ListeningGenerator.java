@@ -31,13 +31,21 @@ public class ListeningGenerator {
             return Optional.empty();
         }
 
+        String explanation;
+        if (example != null && example.getZh() != null) {
+            explanation = example.getZh() + (example.getVi() != null ? " (" + example.getVi() + ")" : "")
+                    + " — " + vocab.getHanzi() + " [" + vocab.getPinyin() + "]: " + vocab.getMeaningVi();
+        } else {
+            explanation = vocab.getHanzi() + " [" + vocab.getPinyin() + "]: " + vocab.getMeaningVi();
+        }
+
         Exercise exercise = Exercise.builder()
                 .exerciseType(ExerciseType.LISTENING)
                 .hskLevel(vocab.getHskLevel())
                 .vocabulary(vocab)
                 .example(example)
                 .difficulty(1)
-                .explanation(example != null ? example.getZh() + " (" + example.getVi() + ")" : vocab.getHanzi())
+                .explanation(explanation)
                 .build();
         Exercise savedExercise = exerciseRepository.save(exercise);
 

@@ -107,13 +107,15 @@
 }
 
 .hanziText {
-  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', 'Kaiti SC', '楷体', 'Noto Serif SC', serif;
+  font-size: 2.7rem;
+  font-weight: 500;
   color: var(--text, #142033);
   line-height: 1.15;
   margin: 0;
   transition: color 0.2s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .wordHero:hover .hanziText {
@@ -180,10 +182,13 @@
 }
 
 .collocationText {
-  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
-  font-weight: 600;
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', 'Kaiti SC', '楷体', 'Noto Serif SC', serif;
+  font-weight: 500;
+  font-size: 0.95rem;
   color: var(--text, #142033);
   margin-right: 6px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .collocationVi {
@@ -217,10 +222,12 @@
 }
 
 .exampleZh {
-  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', 'Kaiti SC', '楷体', 'Noto Serif SC', serif;
+  font-size: 1.05rem;
+  font-weight: 400;
   color: var(--text, #142033);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .exampleVi {

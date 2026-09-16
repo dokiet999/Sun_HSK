@@ -8,14 +8,17 @@ import java.util.List;
 @Component
 public class CharacterLevelTokenizationStrategy implements ChineseTokenizationStrategy {
 
+    private static final java.util.regex.Pattern PUNCT_PATTERN = java.util.regex.Pattern.compile(
+            "[\\s\\u3000-\\u303F\\uFF00-\\uFFEF\\u2000-\\u206F.,;:!?\"'()\\[\\]{}\\-—_]+"
+    );
+
     @Override
     public List<String> tokenize(String sentence, int hskLevel) {
         if (sentence == null || sentence.isBlank()) {
             return List.of();
         }
 
-        // Loại bỏ dấu câu phổ biến ở cuối câu để bài sắp xếp câu tự nhiên hơn
-        String clean = sentence.trim().replaceAll("[。？！!?,，\\s]+$", "");
+        String clean = PUNCT_PATTERN.matcher(sentence.trim()).replaceAll("");
 
         List<String> tokens = new ArrayList<>();
         for (int i = 0; i < clean.length(); i++) {

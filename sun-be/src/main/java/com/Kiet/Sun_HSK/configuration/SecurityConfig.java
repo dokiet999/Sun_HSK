@@ -76,9 +76,9 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
 
                         // Vocabulary, Grammar, Exercises GET — ai cũng xem được
-                        .requestMatchers(HttpMethod.GET, "/api/v1/vocabulary/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/exercises/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/grammar/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/vocabulary", "/api/v1/vocabulary/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/exercises", "/api/v1/exercises/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/grammar", "/api/v1/grammar/**").permitAll()
 
                         // Exam list & detail GET — public (không cần đăng nhập)
                         .requestMatchers(HttpMethod.GET, "/api/v1/exams").permitAll()

@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '../layouts/PageContainer';
 import { LevelTabs, VocabularyHero, LessonCard } from '../features/vocabulary';
 import { getLevelConfig } from '../data/vocabData';
 import { vocabularyService } from '../services/vocabularyService';
 import styles from './Vocabulary.module.css';
 
-export default function Vocabulary() {
+export default function Vocabulary({ version: propVersion }) {
   const { level: levelParam } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
 
-  // Xác định cấu hình cấp độ hiện tại (mặc định HSK 1 nếu không truyền)
-  const currentLevel = getLevelConfig(levelParam || '1');
+  // Xác định phiên bản: HSK 2.0 hay HSK 3.0 dựa vào prop hoặc đường dẫn URL
+  const currentVersion = propVersion || (location.pathname.includes('/hsk3') ? 'hsk3' : 'hsk2');
+
+  // Đối với HSK 2.0 chỉ có tối đa 6 cấp độ (HSK 1 - 6), nếu truyền 7 hoặc 7-9 thì tự động về 1
+  let safeLevel = levelParam || '1';
+  if (currentVersion === 'hsk2' && (safeLevel === '7' || safeLevel === '7-9')) {
+    safeLevel = '1';
+  }
+
+  // Cấu hình cấp độ hiện tại
+  const currentLevel = getLevelConfig(safeLevel);
+
+  const hskVersionParam = currentVersion === 'hsk3' ? 'HSK_3' : 'HSK_2';
 
   const [lessonData, setLessonData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +35,7 @@ export default function Vocabulary() {
       try {
         setLoading(true);
         setError(null);
-        const res = await vocabularyService.getLessonOverview(currentLevel.id, 12);
+        const res = await vocabularyService.getLessonOverview(currentLevel.id, 12, hskVersionParam);
         if (isMounted) {
           if (res && res.result) {
             setLessonData(res.result);
@@ -45,7 +57,7 @@ export default function Vocabulary() {
     return () => {
       isMounted = false;
     };
-  }, [currentLevel.id]);
+  }, [currentLevel.id, hskVersionParam]);
 
   const lessons = lessonData?.lessons || [];
 
@@ -65,16 +77,23 @@ export default function Vocabulary() {
         : 0
   };
 
+  const basePath = `/vocabulary/${currentVersion}`;
+
   return (
     <PageContainer>
-      {/* 7 HSK Level Tabs (Sticky) */}
-      <LevelTabs currentLevelId={currentLevel.id} />
+      {/* Cấp độ HSK: HSK 2.0 hiển thị 6 cấp, HSK 3.0 hiển thị 7 cấp (kèm HSK 7-9) */}
+      <LevelTabs
+        currentLevelId={currentLevel.id}
+        version={currentVersion}
+        basePath={basePath}
+      />
 
       {/* Hero Overview Banner */}
       <VocabularyHero
         levelConfig={currentLevel}
         stats={stats}
         loading={loading}
+        version={currentVersion}
       />
 
       {/* Main Content Area */}
@@ -83,10 +102,12 @@ export default function Vocabulary() {
           <div className={styles.sectionHeader}>
             <div>
               <h2 className={styles.sectionTitle}>
-                Danh sách bài học <span>{currentLevel.label}</span>
+                Danh sách bài học {currentVersion === 'hsk3' ? 'HSK 3.0' : 'HSK 2.0'} <span>{currentLevel.label}</span>
               </h2>
               <p className={styles.sectionSubtitle}>
-                Mỗi bài học được chia nhỏ theo từng chủ đề hoặc 10–12 từ vựng giúp bạn học tập nhẹ nhàng, ghi nhớ sâu.
+                {currentVersion === 'hsk3'
+                  ? 'Từ vựng theo chuẩn mới 3 bậc 9 cấp kết hợp 4 trụ cột ngôn ngữ, phân chia thành các bài học vừa sức.'
+                  : 'Mỗi bài học được chia nhỏ theo từng chủ đề hoặc 10–12 từ vựng giúp bạn học tập nhẹ nhàng, ghi nhớ sâu.'}
               </p>
             </div>
           </div>
@@ -129,7 +150,7 @@ export default function Vocabulary() {
             </div>
           )}
 
-          {/* Empty State (Ví dụ cấp độ chưa có dữ liệu) */}
+          {/* Empty State */}
           {!loading && !error && lessons.length === 0 && (
             <div className={styles.emptyBox}>
               <div className={styles.emptyIcon}>{currentLevel.icon}</div>
@@ -141,7 +162,7 @@ export default function Vocabulary() {
               </p>
               <button
                 className={styles.switchBtn}
-                onClick={() => navigate('/vocabulary/1')}
+                onClick={() => navigate(`${basePath}/1`)}
               >
                 Học HSK 1 ngay
               </button>
