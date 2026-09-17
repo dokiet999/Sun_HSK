@@ -658,6 +658,27 @@
   color: #d97706 !important;
 }
 
+.writePracticeBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  display: grid;
+  place-items: center;
+  color: #475467;
+  transition: all 0.2s ease;
+}
+
+.writePracticeBtn:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+  transform: translateY(-1px);
+}
+
 /* Card Body */
 .cardBody {
   display: grid;

@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { getLevelConfig, formatPos } from '../data/vocabData';
 import { vocabularyService } from '../services/vocabularyService';
 import { playChineseAudio } from '../utils/audioPlayer';
+import HanziWriterModal from '../components/HanziWriter/HanziWriterModal';
 import styles from './LessonDetail.module.css';
 
 /**
@@ -53,6 +54,7 @@ export default function LessonDetail() {
   const [isPlayingAll, setIsPlayingAll] = useState(false);
   const [showStudyMenu, setShowStudyMenu] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [writingWordIndex, setWritingWordIndex] = useState(null);
 
   const menuRef = useRef(null);
 
@@ -470,7 +472,7 @@ export default function LessonDetail() {
         {/* Cards List */}
         {!loading && !error && processedWords.length > 0 && (
           <div className={styles.cardsList}>
-            {processedWords.map((word) => {
+            {processedWords.map((word, wordIndex) => {
               const isMasked = maskedMap[word.id] !== undefined ? maskedMap[word.id] : maskAll;
 
               // Gộp câu ví dụ và cụm từ (làm ví dụ 2) thành danh sách câu ví dụ nối tiếp
@@ -575,6 +577,16 @@ export default function LessonDetail() {
                         title={word.inReviewList ? 'Đã ghim ôn tập' : 'Ghim ôn tập'}
                       >
                         {word.inReviewList ? '⭐' : '☆'}
+                      </button>
+
+                      <button
+                        type="button"
+                        className={styles.writePracticeBtn}
+                        onClick={() => setWritingWordIndex(wordIndex)}
+                        aria-label="Luyện viết chữ Hán"
+                        title="Luyện viết chữ Hán"
+                      >
+                        ✍️
                       </button>
                     </div>
                   </div>
@@ -683,6 +695,17 @@ export default function LessonDetail() {
         <div className={styles.toast}>
           {toastMessage}
         </div>
+      )}
+
+      {/* Hanzi Writer Calligraphy Modal */}
+      {writingWordIndex !== null && processedWords[writingWordIndex] && (
+        <HanziWriterModal
+          word={processedWords[writingWordIndex]}
+          words={processedWords}
+          currentIndex={writingWordIndex}
+          onClose={() => setWritingWordIndex(null)}
+          onNavigate={(newIndex) => setWritingWordIndex(newIndex)}
+        />
       )}
     </div>
   );
