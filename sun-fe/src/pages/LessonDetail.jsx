@@ -55,6 +55,14 @@ export default function LessonDetail() {
   const [showStudyMenu, setShowStudyMenu] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [writingWordIndex, setWritingWordIndex] = useState(null);
+  const [expandedExamplesMap, setExpandedExamplesMap] = useState({});
+
+  const toggleExpandExamples = (wordId) => {
+    setExpandedExamplesMap((prev) => ({
+      ...prev,
+      [wordId]: !prev[wordId],
+    }));
+  };
 
   const menuRef = useRef(null);
 
@@ -603,37 +611,73 @@ export default function LessonDetail() {
                         {word.meaningVi}
                       </p>
 
-                      {/* Danh sách các câu ví dụ nối tiếp nhau */}
-                      {combinedExamples.length > 0 && (
-                        <div className={styles.examplesContainer}>
-                          {combinedExamples.map((ex, idx) => (
-                            <div key={idx} className={styles.exampleItem}>
-                              <div className={styles.exampleZhRow}>
-                                <span className={styles.exampleNumber}>
-                                  {combinedExamples.length > 1 ? `Ví dụ ${idx + 1}:` : 'Ví dụ:'}
-                                </span>
-                                <span className={styles.exampleZh}>
-                                  {renderHighlightedZh(ex.zh, word.hanzi, styles.highlightWord)}
-                                </span>
-                                <button
-                                  type="button"
-                                  className={styles.exampleAudioBtn}
-                                  onClick={() => playChineseAudio(ex.zh, ex.audioPath)}
-                                  title="Nghe câu ví dụ"
-                                  aria-label="Nghe câu ví dụ"
-                                >
-                                  🔊
-                                </button>
-                              </div>
-                              {ex.vi && (
-                                <div className={styles.exampleViRow}>
-                                  <span className={styles.exampleViText}>{ex.vi}</span>
+                      {/* Danh sách các câu ví dụ nối tiếp nhau (hiển thị trước 3 ví dụ, có nút xem thêm) */}
+                      {combinedExamples.length > 0 && (() => {
+                        const isExamplesExpanded = Boolean(expandedExamplesMap[word.id]);
+                        const visibleExamples = isExamplesExpanded ? combinedExamples : combinedExamples.slice(0, 3);
+                        const hasMoreExamples = combinedExamples.length > 3;
+
+                        return (
+                          <div className={styles.examplesContainer}>
+                            {visibleExamples.map((ex, idx) => (
+                              <div key={idx} className={styles.exampleItem}>
+                                <div className={styles.exampleZhRow}>
+                                  <span className={styles.exampleNumber}>
+                                    {combinedExamples.length > 1 ? `Ví dụ ${idx + 1}:` : 'Ví dụ:'}
+                                  </span>
+                                  <span className={styles.exampleZh}>
+                                    {renderHighlightedZh(ex.zh, word.hanzi, styles.highlightWord)}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className={styles.exampleAudioBtn}
+                                    onClick={() => playChineseAudio(ex.zh, ex.audioPath)}
+                                    title="Nghe câu ví dụ"
+                                    aria-label="Nghe câu ví dụ"
+                                  >
+                                    🔊
+                                  </button>
                                 </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                                {ex.vi && (
+                                  <div className={styles.exampleViRow}>
+                                    <span className={styles.exampleViText}>{ex.vi}</span>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+
+                            {hasMoreExamples && (
+                              <button
+                                type="button"
+                                className={styles.toggleExamplesBtn}
+                                onClick={() => toggleExpandExamples(word.id)}
+                              >
+                                <svg
+                                  className={styles.toggleExamplesIcon}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
+                                >
+                                  {isExamplesExpanded ? (
+                                    <polyline points="18 15 12 9 6 15" />
+                                  ) : (
+                                    <polyline points="6 9 12 15 18 9" />
+                                  )}
+                                </svg>
+                                <span>
+                                  {isExamplesExpanded
+                                    ? 'Thu gọn ví dụ'
+                                    : `Xem thêm ${combinedExamples.length - 3} ví dụ`}
+                                </span>
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     {/* Right column: Khung minh họa (bỏ xám xung quanh, để lại mỗi khung) */}
