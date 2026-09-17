@@ -103,6 +103,8 @@ jobs:
             response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$RENDER_HOOK")
             if [ "$response" -ge 200 ] && [ "$response" -lt 300 ]; then
               echo "Render deploy successfully triggered (HTTP $response)."
+            elif [ "$response" -eq 409 ]; then
+              echo "Render deployment is already in progress (HTTP 409 Conflict). Skipping duplicate trigger."
             else
               echo "Failed to trigger Render deploy. HTTP response code: $response"
               exit 1

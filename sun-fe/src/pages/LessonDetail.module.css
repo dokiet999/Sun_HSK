@@ -658,6 +658,27 @@
   color: #d97706 !important;
 }
 
+.writePracticeBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  display: grid;
+  place-items: center;
+  color: #475467;
+  transition: all 0.2s ease;
+}
+
+.writePracticeBtn:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+  transform: translateY(-1px);
+}
+
 /* Card Body */
 .cardBody {
   display: grid;
@@ -789,6 +810,40 @@
   padding: 1px 4px;
   border-radius: 4px;
   display: inline-block;
+}
+
+/* Nút Xem thêm / Thu gọn câu ví dụ */
+.toggleExamplesBtn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.toggleExamplesBtn:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.12);
+}
+
+.toggleExamplesIcon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke-width: 2.2;
 }
 
 /* Right Column: Image Frame (bỏ xám xung quanh, để lại mỗi khung) */
