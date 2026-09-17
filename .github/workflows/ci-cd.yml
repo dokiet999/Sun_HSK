@@ -101,7 +101,7 @@ jobs:
           if [ -n "$RENDER_HOOK" ]; then
             echo "Triggering Render deployment..."
             response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$RENDER_HOOK")
-            if [ "$response" -ge 200 ] && [ "$response" -lt 300 ]; then
+            if { [ "$response" -ge 200 ] && [ "$response" -lt 300 ]; } || [ "$response" -eq 409 ]; then
               echo "Render deploy successfully triggered (HTTP $response)."
             else
               echo "Failed to trigger Render deploy. HTTP response code: $response"
