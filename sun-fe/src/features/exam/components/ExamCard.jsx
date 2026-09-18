@@ -12,6 +12,14 @@ export default function ExamCard({ exam, levelColor, onStart }) {
   const diff = difficultyMeta[exam.difficulty] || difficultyMeta['Trung bình']
   const hasAttempt = exam.bestScorePercent !== null && exam.bestScorePercent !== undefined
 
+  const handleStartClick = () => {
+    if (onStart) {
+      onStart(exam)
+    } else {
+      navigate(`/hsk-tests/preview/${exam.id}`)
+    }
+  }
+
   return (
     <article className={styles.card}>
       {/* Header */}
@@ -65,15 +73,9 @@ export default function ExamCard({ exam, levelColor, onStart }) {
         <button
           className={styles.startBtn}
           style={{ background: levelColor }}
-          onClick={() => onStart?.(exam)}
+          onClick={handleStartClick}
         >
           Làm bài →
-        </button>
-        <button 
-          className={styles.previewBtn}
-          onClick={() => navigate(`/hsk-tests/intro/${exam.id}`)}
-        >
-          Xem trước
         </button>
         <button
           className={`${styles.historyBtn} ${!hasAttempt ? styles.historyBtnDisabled : ''}`}

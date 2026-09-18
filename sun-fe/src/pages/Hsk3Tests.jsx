@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import PageContainer from '../layouts/PageContainer'
 import { examService } from '../services/examService'
 import styles from './Hsk3Tests.module.css'
 
 export default function Hsk3Tests() {
+  const navigate = useNavigate()
   const [exams, setExams] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTier, setActiveTier] = useState('ALL') // 'ALL' | 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
@@ -121,9 +122,13 @@ export default function Hsk3Tests() {
                     </div>
 
                     <div className={styles.cardAction}>
-                      <Link to={`/hsk-tests/hsk3/take/${exam.id}`} className={styles.startBtn}>
-                        Vào thi iBT
-                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/hsk-tests/preview/${exam.id}`)}
+                        className={styles.startBtn}
+                      >
+                        Làm bài iBT →
+                      </button>
                     </div>
                   </div>
                 </div>

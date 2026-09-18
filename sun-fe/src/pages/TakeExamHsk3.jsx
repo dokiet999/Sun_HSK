@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { examService } from '../services/examService'
 import styles from './TakeExamHsk3.module.css'
 
 export default function TakeExamHsk3() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [exam, setExam] = useState(null)
   const [attempt, setAttempt] = useState(null)
@@ -36,6 +37,12 @@ export default function TakeExamHsk3() {
 
   // Load Exam and start attempt
   useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      navigate('/login', { state: { from: location.pathname } })
+      return
+    }
+
     async function init() {
       try {
         setLoading(true)
@@ -51,6 +58,10 @@ export default function TakeExamHsk3() {
         setTimeLeft(limitMinutes * 60)
       } catch (err) {
         console.error('Không thể tải đề thi hoặc tạo phiên làm bài iBT:', err)
+        if (err.response?.status === 401) {
+          navigate('/login', { state: { from: location.pathname } })
+          return
+        }
         alert('Không thể kết nối phòng thi HSK 3.0 iBT.')
         navigate('/hsk-tests/hsk3')
       } finally {

@@ -21,7 +21,7 @@ export default function ExamList({ exams, levelColor }) {
   }, [exams, difficulty, type, sort])
 
   function handleStart(exam) {
-    navigate(`/hsk-tests/intro/${exam.id}`)
+    navigate(`/hsk-tests/preview/${exam.id}`)
   }
 
   return (
