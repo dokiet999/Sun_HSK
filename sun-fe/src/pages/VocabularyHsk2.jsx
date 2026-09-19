@@ -83,26 +83,6 @@ export default function VocabularyHsk2() {
           })}
         </div>
 
-        {/* Stats Row */}
-        <div className={styles.statsRow}>
-          <div className={styles.statItem}>
-            <span className={styles.statLabel}>Cấp độ hiện tại</span>
-            <span className={styles.statValue}>HSK {currentLevelId}</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statLabel}>Tổng số từ vựng</span>
-            <span className={styles.statValue}>{totalWords} từ</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statLabel}>Số bài học</span>
-            <span className={styles.statValue}>{lessons.length} bài</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statLabel}>Tiến độ đã học</span>
-            <span className={styles.statValue}>{progressPercent}%</span>
-          </div>
-        </div>
-
         {/* Lessons List */}
         {loading ? (
           <div className={styles.stateBox}>Đang tải danh sách bài học HSK {currentLevelId}...</div>

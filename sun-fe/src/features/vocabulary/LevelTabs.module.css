@@ -23,6 +23,7 @@
 
 .tabsList {
   display: flex;
+  justify-content: center;
   gap: 10px;
   min-width: max-content;
 }

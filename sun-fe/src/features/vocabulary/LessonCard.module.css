@@ -12,9 +12,9 @@
 }
 
 .card:hover {
-  border-color: var(--card-border, #bfdbfe);
+  border-color: #2563eb;
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(16, 70, 140, 0.08);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.08);
 }
 
 .cardHeader {
@@ -26,11 +26,11 @@
 .lessonBadge {
   font-size: 0.8rem;
   font-weight: 800;
-  color: var(--card-color, #2382f6);
-  background: var(--card-light, #f0f9ff);
+  color: #1d4ed8;
+  background: #eff6ff;
   padding: 4px 10px;
   border-radius: 8px;
-  border: 1px solid var(--card-border, #bae6fd);
+  border: 1px solid #bfdbfe;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -92,7 +92,7 @@
 
 .progressFill {
   height: 100%;
-  background: var(--card-color, #2382f6);
+  background: #2563eb;
   border-radius: 999px;
   transition: width 0.5s ease;
 }
@@ -100,7 +100,7 @@
 .cardFooter {
   margin-top: 4px;
   padding-top: 12px;
-  border-top: 1px solid var(--line, #dce8f6);
+  border-top: 1px solid var(--line, #e2e8f0);
 }
 
 .viewBtn {
@@ -109,8 +109,8 @@
   align-items: center;
   padding: 8px 12px;
   border-radius: 10px;
-  background: var(--card-light, #f0f9ff);
-  color: var(--card-color, #2382f6);
+  background: #eff6ff;
+  color: #1d4ed8;
   font-size: 0.88rem;
   font-weight: 700;
   text-decoration: none;
@@ -118,7 +118,7 @@
 }
 
 .viewBtn:hover {
-  background: var(--card-color, #2382f6);
+  background: #2563eb;
   color: #ffffff;
 }
 

@@ -88,15 +88,6 @@ export default function VocabularyHsk3() {
 
     return (
       <PageContainer>
-        {/* Nút quay lại Hub cấp độ */}
-        <div className={styles.backBar}>
-          <div className="container">
-            <Link to="/vocabulary/hsk3" className={styles.backBtn}>
-              ← Quay lại danh sách cấp độ HSK 3.0
-            </Link>
-          </div>
-        </div>
-
         {/* Hero Banner */}
         <VocabularyHero
           levelConfig={currentLevel}
@@ -106,8 +97,14 @@ export default function VocabularyHsk3() {
         />
 
         {/* Danh sách bài học */}
-        <div style={{ padding: '40px 0 80px', background: '#f8fafc' }}>
+        <div style={{ padding: '40px 0 80px', background: '#ffffff' }}>
           <div className="container">
+            <div style={{ marginBottom: 20 }}>
+              <Link to="/vocabulary/hsk3" className={styles.backBtn}>
+                ← Quay lại danh sách cấp độ HSK 3.0
+              </Link>
+            </div>
+
             <div style={{ marginBottom: 28 }}>
               <h2 style={{ fontSize: 24, fontWeight: 900, color: 'var(--blue-950)', margin: '0 0 6px 0' }}>
                 Danh sách bài học HSK 3.0 · <span>{currentLevel.label}</span>
@@ -151,9 +148,6 @@ export default function VocabularyHsk3() {
                     key={lesson.lessonNumber}
                     lesson={lesson}
                     levelSlug={`hsk3/${currentLevel.slug}`}
-                    levelColor={currentLevel.color}
-                    levelLight={currentLevel.colorLight}
-                    levelBorder={currentLevel.colorBorder}
                   />
                 ))}
               </div>
@@ -188,32 +182,12 @@ export default function VocabularyHsk3() {
               <span>🚀</span> HSK 3.0 • TIÊU CHUẨN MỚI 3 BẬC 9 CẤP
             </div>
             <h1 className={styles.heading}>
-              Kho Từ vựng <span>HSK 3.0</span>
+              Kho Từ vựng HSK 3.0
             </h1>
             <p className={styles.desc}>
               Khung tiêu chuẩn đánh giá năng lực Hán ngữ mới nhất gồm 3 Bậc 9 Cấp (11.092 từ vựng và 3.000 chữ Hán).
               Chọn từng cấp độ bên dưới để xem toàn bộ danh sách bài học, luyện Flashcard và làm bài tập củng cố.
             </p>
-
-            {/* Stats Row */}
-            <div className={styles.statsRow}>
-              <div className={styles.statItem}>
-                <strong className={styles.statValue}>11.092</strong>
-                <span className={styles.statLabel}>Từ vựng chuẩn hóa</span>
-              </div>
-              <div className={styles.statItem}>
-                <strong className={styles.statValue}>3.000</strong>
-                <span className={styles.statLabel}>Chữ Hán cốt lõi</span>
-              </div>
-              <div className={styles.statItem}>
-                <strong className={styles.statValue}>3 Bậc</strong>
-                <span className={styles.statLabel}>Sơ · Trung · Cao</span>
-              </div>
-              <div className={styles.statItem}>
-                <strong className={styles.statValue}>7 Nhóm cấp</strong>
-                <span className={styles.statLabel}>HSK 1 đến HSK 7-9</span>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -259,12 +233,6 @@ export default function VocabularyHsk3() {
                   <div
                     key={lvl.id}
                     className={styles.levelCard}
-                    style={{
-                      '--card-color': lvl.color,
-                      '--card-light': lvl.colorLight,
-                      '--card-border': lvl.colorBorder,
-                      '--card-badge': lvl.colorBadge,
-                    }}
                     onClick={() => navigate(`/vocabulary/hsk3/${lvl.slug}`)}
                   >
                     {/* Top Row: Badge & Tier */}
@@ -301,7 +269,7 @@ export default function VocabularyHsk3() {
                       <div className={styles.progressSection} style={{ marginTop: 14 }}>
                         <div className={styles.progressLabelRow}>
                           <span>Tiến độ học tập</span>
-                          <span style={{ color: 'var(--card-badge)' }}>Sẵn sàng học</span>
+                          <span className={styles.progressStatus}>Sẵn sàng học</span>
                         </div>
                         <div className={styles.progressBar}>
                           <div className={styles.progressFill} style={{ width: '0%' }} />

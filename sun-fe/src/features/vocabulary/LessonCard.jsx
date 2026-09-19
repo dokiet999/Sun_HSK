@@ -2,20 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './LessonCard.module.css';
 
-export default function LessonCard({ lesson, levelSlug, levelColor, levelLight, levelBorder }) {
+export default function LessonCard({ lesson, levelSlug }) {
   const { lessonNumber, title, totalWords, learnedWords, masteredWords, progressPercent, isCompleted } = lesson;
 
   const percent = progressPercent || (totalWords > 0 ? Math.round((learnedWords / totalWords) * 100) : 0);
 
   return (
-    <div
-      className={styles.card}
-      style={{
-        '--card-color': levelColor,
-        '--card-light': levelLight,
-        '--card-border': levelBorder
-      }}
-    >
+    <div className={styles.card}>
       <div className={styles.cardHeader}>
         <div className={styles.lessonBadge}>
           Bài {lessonNumber}

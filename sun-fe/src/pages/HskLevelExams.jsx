@@ -69,118 +69,114 @@ export default function HskLevelExams() {
 
   return (
     <PageContainer>
-      {/* Level-colored hero */}
-      <ExamHero level={level} examCount={loading ? undefined : exams.length} />
+      <div className={styles.pageWrapper}>
+        {/* Unified hero */}
+        <ExamHero level={level} examCount={loading ? undefined : exams.length} />
 
-      <div className={styles.body}>
-        <div className="container">
-          <div className={styles.layout}>
-            {/* Sidebar: level switcher */}
-            <aside className={styles.sidebar}>
-              <div className={styles.sidebarCard}>
-                <div className={styles.sidebarTitle}>Chọn cấp độ khác</div>
-                <nav className={styles.levelNav}>
-                  {hskLevels.map((l) => (
-                    <Link
-                      key={l.id}
-                      to={`/hsk-tests/${l.id}`}
-                      className={`${styles.levelLink} ${l.id === levelId ? styles.levelLinkActive : ''}`}
-                      style={l.id === levelId ? { '--active-color': l.color, '--active-light': l.colorLight } : {}}
-                    >
-                      <span
-                        className={styles.levelDot}
-                        style={{ background: l.color }}
-                      />
-                      <span className={styles.levelLinkText}>
-                        <b>{l.label}</b>
-                        <small>{l.sublabel} · {countsByLevel[l.id] !== undefined ? countsByLevel[l.id] : 0} đề</small>
-                      </span>
-                      {l.id === levelId && <span className={styles.activeArrow}>←</span>}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-
-              {/* Quick info card */}
-              <div className={styles.infoCard}
-                style={{ '--level-color': level.color, '--level-light': level.colorLight, '--level-border': level.colorBorder }}>
-                <div className={styles.infoTitle}>Thông tin nhanh</div>
-                <div className={styles.infoRow}>
-                  <span>Từ vựng</span>
-                  <strong style={{ color: level.color }}>{level.vocab.toLocaleString()}</strong>
+        <div className={styles.body}>
+          <div className="container">
+            <div className={styles.layout}>
+              {/* Sidebar: level switcher */}
+              <aside className={styles.sidebar}>
+                <div className={styles.sidebarCard}>
+                  <div className={styles.sidebarTitle}>Chọn cấp độ khác</div>
+                  <nav className={styles.levelNav}>
+                    {hskLevels.map((l) => (
+                      <Link
+                        key={l.id}
+                        to={`/hsk-tests/${l.id}`}
+                        className={`${styles.levelLink} ${l.id === levelId ? styles.levelLinkActive : ''}`}
+                      >
+                        <span className={styles.levelDot} />
+                        <span className={styles.levelLinkText}>
+                          <b>{l.label}</b>
+                          <small>{l.sublabel} · {countsByLevel[l.id] !== undefined ? countsByLevel[l.id] : 0} đề</small>
+                        </span>
+                        {l.id === levelId && <span className={styles.activeArrow}>←</span>}
+                      </Link>
+                    ))}
+                  </nav>
                 </div>
-                <div className={styles.infoRow}>
-                  <span>Số câu hỏi</span>
-                  <strong style={{ color: level.color }}>{level.totalQuestions}</strong>
+
+                {/* Quick info card */}
+                <div className={styles.infoCard}>
+                  <div className={styles.infoTitle}>Thông tin nhanh</div>
+                  <div className={styles.infoRow}>
+                    <span>Từ vựng</span>
+                    <strong className={styles.infoValue}>{level.vocab.toLocaleString()}</strong>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span>Số câu hỏi</span>
+                    <strong className={styles.infoValue}>{level.totalQuestions}</strong>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span>Thời gian</span>
+                    <strong className={styles.infoValue}>{level.duration} phút</strong>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span>Điểm đạt</span>
+                    <strong className={styles.infoValue}>60/100</strong>
+                  </div>
                 </div>
-                <div className={styles.infoRow}>
-                  <span>Thời gian</span>
-                  <strong style={{ color: level.color }}>{level.duration} phút</strong>
+              </aside>
+
+              {/* Main: exam list */}
+              <main className={styles.main}>
+                <div className={styles.mainHeader}>
+                  <h2 className={styles.mainTitle}>
+                    Danh sách đề thi {level.label}
+                  </h2>
+                  <p className={styles.mainDesc}>
+                    {loading
+                      ? 'Đang tải...'
+                      : `${exams.length} đề thi${
+                          totalPages > 1 ? ` · Trang ${currentPage}/${totalPages}` : ''
+                        } · Lọc và sắp xếp theo nhu cầu của bạn.`}
+                  </p>
                 </div>
-                <div className={styles.infoRow}>
-                  <span>Điểm đạt</span>
-                  <strong style={{ color: level.color }}>60/100</strong>
-                </div>
-              </div>
-            </aside>
 
-            {/* Main: exam list */}
-            <main className={styles.main}>
-              <div className={styles.mainHeader}>
-                <h2 className={styles.mainTitle}>
-                  Danh sách đề thi{' '}
-                  <span style={{ color: level.color }}>{level.label}</span>
-                </h2>
-                <p className={styles.mainDesc}>
-                  {loading
-                    ? 'Đang tải...'
-                    : `${exams.length} đề thi${
-                        totalPages > 1 ? ` · Trang ${currentPage}/${totalPages}` : ''
-                      } · Lọc và sắp xếp theo nhu cầu của bạn.`}
-                </p>
-              </div>
+                {loading ? (
+                  <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Đang tải danh sách đề thi...</div>
+                ) : exams.length === 0 ? (
+                  <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Chưa có đề thi nào cho cấp độ này.</div>
+                ) : (
+                  <ExamList exams={paginatedExams} />
+                )}
 
-              {loading ? (
-                <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Đang tải danh sách đề thi...</div>
-              ) : exams.length === 0 ? (
-                <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Chưa có đề thi nào cho cấp độ này.</div>
-              ) : (
-                <ExamList exams={paginatedExams} levelColor={level.color} />
-              )}
-
-              {/* Pagination controls */}
-              {totalPages > 1 && (
-                <div className={styles.pagination} style={{ '--active-color': level.color }}>
-                  <button
-                    className={styles.pageBtn}
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    aria-label="Trang trước"
-                  >
-                    ← Trước
-                  </button>
-
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                {/* Pagination controls */}
+                {totalPages > 1 && (
+                  <div className={styles.pagination}>
                     <button
-                      key={p}
-                      className={`${styles.pageBtn} ${currentPage === p ? styles.pageBtnActive : ''}`}
-                      onClick={() => handlePageChange(p)}
+                      className={styles.pageBtn}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      aria-label="Trang trước"
                     >
-                      {p}
+                      ← Trước
                     </button>
-                  ))}
 
-                  <button
-                    className={styles.pageBtn}
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    aria-label="Trang sau"
-                  >
-                    Sau →
-                  </button>
-                </div>
-              )}
-            </main>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                      <button
+                        key={p}
+                        className={`${styles.pageBtn} ${currentPage === p ? styles.pageBtnActive : ''}`}
+                        onClick={() => handlePageChange(p)}
+                      >
+                        {p}
+                      </button>
+                    ))}
+
+                    <button
+                      className={styles.pageBtn}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      aria-label="Trang sau"
+                    >
+                      Sau →
+                    </button>
+                  </div>
+                )}
+              </main>
+            </div>
           </div>
         </div>
       </div>

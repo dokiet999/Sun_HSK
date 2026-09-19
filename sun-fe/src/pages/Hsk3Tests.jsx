@@ -45,18 +45,23 @@ export default function Hsk3Tests() {
 
   return (
     <PageContainer>
-      <div className={styles.container}>
-        {/* Header */}
-        <div className={styles.headerSection}>
-          <span className={styles.badge}>HSK 3.0 • Computer-Based Test</span>
-          <h1 className={styles.title}>Kho đề thi HSK 3.0 (iBT)</h1>
-          <p className={styles.description}>
-            Hệ thống thi máy tính chuẩn quốc tế mô phỏng kỳ thi HSK mới 3 bậc 9 cấp. Đầy đủ các phần thi Nghe, Đọc, Viết và Dịch thuật với giao diện phòng thi chuẩn hóa.
-          </p>
+      <div className={styles.pageWrap}>
+        {/* Header Hero */}
+        <div className={styles.heroSection}>
+          <div className={styles.container}>
+            <div className={styles.heroContent}>
+              <span className={styles.badge}>HSK 3.0 • Computer-Based Test</span>
+              <h1 className={styles.title}>Kho đề thi HSK 3.0 (iBT)</h1>
+              <p className={styles.description}>
+                Hệ thống thi máy tính chuẩn quốc tế mô phỏng kỳ thi HSK mới 3 bậc 9 cấp. Đầy đủ các phần thi Nghe, Đọc, Viết và Dịch thuật với giao diện phòng thi chuẩn hóa.
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className={styles.filterBar}>
+        <div className={`${styles.container} ${styles.bodyContainer}`}>
+          {/* Filter Tabs */}
+          <div className={styles.filterBar}>
           <button
             className={`${styles.filterBtn} ${activeTier === 'ALL' ? styles.filterBtnActive : ''}`}
             onClick={() => setActiveTier('ALL')}
@@ -146,6 +151,7 @@ export default function Hsk3Tests() {
             </Link>
           </div>
         )}
+      </div>
       </div>
     </PageContainer>
   )

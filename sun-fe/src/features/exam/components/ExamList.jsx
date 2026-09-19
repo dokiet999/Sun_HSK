@@ -4,19 +4,18 @@ import { difficultyOptions, typeOptions } from '../../../data/examData'
 import ExamCard from './ExamCard'
 import styles from './ExamList.module.css'
 
-export default function ExamList({ exams, levelColor }) {
+export default function ExamList({ exams }) {
   const navigate = useNavigate()
   const [difficulty, setDifficulty] = useState('Tất cả')
   const [type, setType]             = useState('Tất cả')
-  const [sort, setSort]             = useState('popular') // popular | rating | newest
+  const [sort, setSort]             = useState('popular') // popular | newest
 
   const filtered = useMemo(() => {
     let list = [...exams]
     if (difficulty !== 'Tất cả') list = list.filter((e) => e.difficulty === difficulty)
     if (type !== 'Tất cả')       list = list.filter((e) => e.type === type)
-    if (sort === 'popular') list.sort((a, b) => b.attempts - a.attempts)
-    if (sort === 'rating')  list.sort((a, b) => b.rating  - a.rating)
-    if (sort === 'newest')  list.sort((a, b) => b.year    - a.year)
+    if (sort === 'popular') list.sort((a, b) => (b.attempts || 0) - (a.attempts || 0))
+    if (sort === 'newest')  list.sort((a, b) => (b.year || 0) - (a.year || 0))
     return list
   }, [exams, difficulty, type, sort])
 
@@ -35,7 +34,6 @@ export default function ExamList({ exams, levelColor }) {
               <button
                 key={d}
                 className={`${styles.pill} ${difficulty === d ? styles.pillActive : ''}`}
-                style={difficulty === d ? { background: levelColor, borderColor: levelColor } : {}}
                 onClick={() => setDifficulty(d)}
               >
                 {d}
@@ -63,7 +61,6 @@ export default function ExamList({ exams, levelColor }) {
             onChange={(e) => setSort(e.target.value)}
           >
             <option value="popular">Phổ biến nhất</option>
-            <option value="rating">Đánh giá cao</option>
             <option value="newest">Mới nhất</option>
           </select>
         </div>
@@ -83,7 +80,6 @@ export default function ExamList({ exams, levelColor }) {
             <ExamCard
               key={exam.id}
               exam={exam}
-              levelColor={levelColor}
               onStart={handleStart}
             />
           ))}

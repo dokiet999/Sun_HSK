@@ -7,7 +7,7 @@ const difficultyMeta = {
   'Khó':        { color: '#ef4444', bg: '#fef2f2', label: 'Khó' },
 }
 
-export default function ExamCard({ exam, levelColor, onStart }) {
+export default function ExamCard({ exam, onStart }) {
   const navigate = useNavigate()
   const diff = difficultyMeta[exam.difficulty] || difficultyMeta['Trung bình']
   const hasAttempt = exam.bestScorePercent !== null && exam.bestScorePercent !== undefined
@@ -40,8 +40,7 @@ export default function ExamCard({ exam, levelColor, onStart }) {
       {(exam.tags && exam.tags.length > 0) && (
         <div className={styles.tags}>
           {exam.tags.map((t) => (
-            <span key={t} className={styles.tag}
-              style={{ color: levelColor, borderColor: levelColor + '40', background: levelColor + '0d' }}>
+            <span key={t} className={styles.tag}>
               {t}
             </span>
           ))}
@@ -62,17 +61,12 @@ export default function ExamCard({ exam, levelColor, onStart }) {
           <span className={styles.statIcon}>👤</span>
           {(exam.attempts || 0).toLocaleString()} lượt
         </span>
-        <span className={styles.stat}>
-          <span className={styles.statIcon}>⭐</span>
-          {exam.rating || '5.0'}
-        </span>
       </div>
 
       {/* Action */}
       <div className={styles.footer}>
         <button
           className={styles.startBtn}
-          style={{ background: levelColor }}
           onClick={handleStartClick}
         >
           Làm bài →

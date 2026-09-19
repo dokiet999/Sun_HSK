@@ -23,16 +23,11 @@ export default function HskTests() {
     fetchExams()
   }, [])
 
-  const stats = [
-    { icon: '📋', value: `${exams.length}`, label: 'Đề thi' },
-    { icon: '🎯', value: '6',       label: 'Cấp độ HSK' },
-    { icon: '👤', value: '10K+',   label: 'Học viên' },
-    { icon: '⭐', value: '4.8',    label: 'Đánh giá TB' },
-  ]
   return (
     <PageContainer>
-      {/* Page hero */}
-      <div className={styles.hero}>
+      <div className={styles.pageWrap}>
+        {/* Page hero */}
+        <div className={styles.hero}>
         <div className={`container ${styles.heroInner}`}>
           <div className={styles.eyebrow}>📝 LUYỆN THI HSK</div>
           <h1 className={styles.heading}>Kho đề thi HSK Online</h1>
@@ -40,17 +35,6 @@ export default function HskTests() {
             Luyện tập với hàng chục đề thi mô phỏng theo từng cấp độ. Chọn cấp độ phù hợp
             và bắt đầu bài kiểm tra ngay hôm nay.
           </p>
-
-          {/* Stats */}
-          <div className={styles.statsRow}>
-            {stats.map((s) => (
-              <div key={s.label} className={styles.statItem}>
-                <span className={styles.statIcon}>{s.icon}</span>
-                <strong className={styles.statValue}>{s.value}</strong>
-                <span className={styles.statLabel}>{s.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -87,6 +71,7 @@ export default function HskTests() {
           </div>
         </div>
       </section>
+      </div>
     </PageContainer>
   )
 }

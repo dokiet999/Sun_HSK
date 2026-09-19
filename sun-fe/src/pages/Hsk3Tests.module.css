@@ -1,43 +1,67 @@
+.pageWrap {
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+.heroSection {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.09) 0%, rgba(0, 0, 0, 0.03) 24px, rgba(0, 0, 0, 0) 64px),
+    #FAF7EE;
+  border-bottom: 1px solid #EAE4D8;
+  padding: 64px 0 72px;
+}
+
+.heroContent {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px 80px;
+  padding: 0 20px;
 }
 
-.headerSection {
-  margin-bottom: 36px;
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 28px;
+.bodyContainer {
+  padding: 36px 20px 80px;
+  background: #ffffff;
 }
 
 .badge {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  color: #0f172a;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  padding: 4px 10px;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #1e3a8a;
+  background: #f1ebd8;
+  border: 1px solid #e2dac7;
+  padding: 6px 16px;
+  border-radius: 999px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 12px;
+  letter-spacing: 0.6px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-size: 28px;
+  font-size: clamp(30px, 4vw, 44px);
   font-weight: 800;
   color: #0f172a;
-  letter-spacing: -0.5px;
-  margin: 0 0 10px 0;
+  letter-spacing: -0.8px;
+  line-height: 1.25;
+  margin: 0 0 14px 0;
 }
 
 .description {
-  font-size: 15px;
-  color: #64748b;
-  max-width: 680px;
-  line-height: 1.6;
-  margin: 0;
+  font-size: 16px;
+  color: #475569;
+  max-width: 660px;
+  line-height: 1.7;
+  margin: 0 auto;
 }
 
 /* Filter Tabs */
@@ -50,10 +74,10 @@
 
 .filterBtn {
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
   color: #475569;
@@ -64,19 +88,18 @@
 .filterBtn:hover {
   background: #f8fafc;
   color: #0f172a;
-  border-color: #cbd5e1;
+  border-color: #2563eb;
 }
 
 .filterBtnActive {
-  background: #0f172a;
-  color: #ffffff;
-  border-color: #0f172a;
+  background: #1e3a8a !important;
+  color: #ffffff !important;
+  border-color: #1e3a8a !important;
 }
 
 .filterBtnActive:hover {
-  background: #1e293b;
+  background: #1d4ed8;
   color: #ffffff;
-  border-color: #1e293b;
 }
 
 /* Exam Grid */
@@ -89,17 +112,18 @@
 .examCard {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
 .examCard:hover {
-  border-color: #94a3b8;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  border-color: #2563eb;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
 }
 
 .cardHead {
@@ -185,12 +209,12 @@
 
 .startBtn {
   flex: 1;
-  padding: 9px 14px;
-  background: #0f172a;
+  padding: 10px 14px;
+  background: #2563eb;
   color: #ffffff;
-  border: 1px solid #0f172a;
-  border-radius: 8px;
-  font-size: 13px;
+  border: 1px solid #2563eb;
+  border-radius: 10px;
+  font-size: 13.5px;
   font-weight: 600;
   text-align: center;
   text-decoration: none;
@@ -200,40 +224,22 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
 .startBtn:hover {
-  background: #1e293b;
-  border-color: #1e293b;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
   transform: translateY(-1px);
-}
-
-.previewBtn {
-  padding: 9px 14px;
-  background: #ffffff;
-  color: #475467;
-  border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.previewBtn:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
-  color: #0f172a;
-  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
 }
 
 .emptyState {
   text-align: center;
   padding: 60px 20px;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid #eae3d5;
+  border-radius: 16px;
 }
 
 .emptyTitle {
