@@ -210,6 +210,19 @@
   font-weight: 600;
 }
 
+.noticeBanner {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  color: #1d4ed8;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .divider {
   display: flex;
   align-items: center;

@@ -1,4 +1,12 @@
-.body { padding: 40px 0 80px; }
+.pageWrapper {
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+.body {
+  background: #ffffff;
+  padding: 40px 0 80px;
+}
 
 .layout {
   display: grid;
@@ -17,21 +25,22 @@
 }
 
 .sidebarCard {
-  background: #fff;
-  border: 1.5px solid var(--line);
-  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
 .sidebarTitle {
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--muted);
+  color: #64748b;
   margin-bottom: 4px;
 }
 
@@ -46,24 +55,32 @@
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: 10px;
   text-decoration: none;
-  color: var(--text);
-  transition: background 0.18s;
+  color: #334155;
+  transition: all 0.18s;
   position: relative;
 }
 
-.levelLink:hover { background: var(--blue-50); }
+.levelLink:hover { background: #f8fafc; color: #1e3a8a; }
 
 .levelLinkActive {
-  background: var(--active-light, var(--blue-50)) !important;
+  background: #eff6ff !important;
+  color: #1e3a8a !important;
+  font-weight: 700;
 }
 
 .levelDot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
+  background: #cbd5e1;
   flex-shrink: 0;
+  transition: background 0.18s;
+}
+
+.levelLinkActive .levelDot {
+  background: #2563eb;
 }
 
 .levelLinkText {
@@ -73,20 +90,20 @@
   flex: 1;
 }
 
-.levelLinkText b { font-size: 13px; font-weight: 800; }
-.levelLinkText small { font-size: 11px; color: var(--muted); }
+.levelLinkText b { font-size: 13px; font-weight: 700; }
+.levelLinkText small { font-size: 11.5px; color: #64748b; }
 
 .activeArrow {
   font-size: 12px;
-  color: var(--active-color, var(--blue-600));
-  font-weight: 900;
+  color: #2563eb;
+  font-weight: 800;
 }
 
 /* Info card */
 .infoCard {
-  background: var(--level-light);
-  border: 1.5px solid var(--level-border);
-  border-radius: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
   padding: 18px;
   display: flex;
   flex-direction: column;
@@ -95,10 +112,10 @@
 
 .infoTitle {
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--muted);
+  color: #64748b;
 }
 
 .infoRow {
@@ -106,13 +123,13 @@
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--level-border);
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .infoRow:last-child { border-bottom: none; }
-.infoRow span { color: var(--muted); }
-.infoRow strong { font-weight: 800; font-size: 14px; }
+.infoRow span { color: #64748b; }
+.infoValue { font-weight: 800; font-size: 14px; color: #1e3a8a; }
 
 /* Main */
 .main { display: flex; flex-direction: column; gap: 20px; }
@@ -121,12 +138,12 @@
 
 .mainTitle {
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: -0.5px;
-  color: var(--blue-950);
+  color: #0f172a;
 }
 
-.mainDesc { font-size: 14px; color: var(--muted); }
+.mainDesc { font-size: 14px; color: #64748b; }
 
 /* Pagination controls */
 .pagination {
@@ -145,34 +162,34 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid var(--line);
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
-  background: #fff;
-  color: var(--blue-950);
+  background: #ffffff;
+  color: #334155;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
 }
 
 .pageBtn:hover:not(:disabled) {
-  border-color: var(--blue-400);
-  background: var(--blue-50);
-  color: var(--blue-700);
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
 .pageBtnActive {
-  background: var(--active-color, #3b82f6) !important;
-  border-color: var(--active-color, #3b82f6) !important;
-  color: #fff !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 .pageBtn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  border-color: var(--line);
+  border-color: #e2e8f0;
   background: #f8fafc;
 }
 

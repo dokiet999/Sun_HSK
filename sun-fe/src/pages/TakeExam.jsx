@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { examService } from '../services/examService'
 import styles from './TakeExam.module.css'
 
@@ -24,6 +24,7 @@ function parseServerDate(dateStr) {
 export default function TakeExam() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [exam, setExam] = useState(null)
   const [attempt, setAttempt] = useState(null)
@@ -50,6 +51,11 @@ export default function TakeExam() {
   attemptRef.current = attempt
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      navigate('/login', { state: { from: location.pathname } })
+      return
+    }
     initExam()
   }, [id])
 
@@ -90,6 +96,11 @@ export default function TakeExam() {
       setTimeLeft(remaining)
 
     } catch (error) {
+      console.error('Không thể tải đề thi hoặc tạo phiên làm bài:', error)
+      if (error.response?.status === 401) {
+        navigate('/login', { state: { from: location.pathname } })
+        return
+      }
       alert('Không thể tải đề thi hoặc tạo phiên làm bài.')
       navigate('/hsk-tests')
     } finally {

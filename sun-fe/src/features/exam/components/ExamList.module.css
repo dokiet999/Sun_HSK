@@ -6,10 +6,11 @@
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
-  background: #fff;
-  border: 1.5px solid var(--line);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
 .filterGroup {
@@ -21,7 +22,7 @@
 .filterLabel {
   font-size: 13px;
   font-weight: 700;
-  color: var(--muted);
+  color: #64748b;
   white-space: nowrap;
 }
 
@@ -29,18 +30,22 @@
 
 .pill {
   padding: 6px 14px;
-  border: 1.5px solid var(--line);
+  border: 1px solid #e2e8f0;
   border-radius: 999px;
-  background: #fff;
+  background: #ffffff;
   font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
+  font-weight: 600;
+  color: #334155;
   cursor: pointer;
   transition: all 0.18s;
   font-family: inherit;
 }
-.pill:hover { border-color: var(--blue-400, #60a5fa); }
-.pillActive { color: #fff !important; }
+.pill:hover { border-color: #2563eb; color: #2563eb; }
+.pillActive {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+}
 
 .select {
   padding: 8px 32px 8px 12px;

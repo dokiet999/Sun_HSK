@@ -35,9 +35,10 @@ export default function App() {
         <Route path="/hsk-tests/hsk2"   element={<HskTests />} />
         <Route path="/hsk-tests/hsk3"   element={<Hsk3Tests />} />
         <Route path="/hsk-tests/hsk3/take/:id" element={<TakeExamHsk3 />} />
-        <Route path="/hsk-tests/:level" element={<HskLevelExams />} />
+        <Route path="/hsk-tests/preview/:id" element={<ExamIntro />} />
         <Route path="/hsk-tests/intro/:id" element={<ExamIntro />} />
         <Route path="/hsk-tests/take/:id" element={<TakeExam />} />
+        <Route path="/hsk-tests/:level" element={<HskLevelExams />} />
 
         {/* Vocabulary Routes */}
         <Route path="/vocabulary"       element={<Vocabulary version="hsk2" />} />

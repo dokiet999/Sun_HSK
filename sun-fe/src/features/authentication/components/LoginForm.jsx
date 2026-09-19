@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Button from '../../../components/ui/Button'
 import { authService } from '../../../services/authService'
 import styles from './LoginForm.module.css'
 
 export default function LoginForm() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
 
@@ -34,7 +35,8 @@ export default function LoginForm() {
         if (data.result.user && data.result.user.role === 'ADMIN') {
           navigate('/admin')
         } else {
-          navigate('/')
+          const from = location.state?.from || '/'
+          navigate(from, { replace: true })
         }
       } else {
         setError('Đăng nhập thất bại.')
@@ -77,6 +79,11 @@ export default function LoginForm() {
           </p>
 
           <form onSubmit={handleSubmit} className={styles.form} noValidate>
+            {location.state?.from && (
+              <div className={styles.noticeBanner}>
+                ℹ️ Vui lòng đăng nhập để bắt đầu làm bài thi.
+              </div>
+            )}
             {error && <div className={styles.errorBanner}>{error}</div>}
 
             <div className={styles.field}>
