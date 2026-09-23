@@ -195,10 +195,11 @@ export default function Vocabulary({ version: propVersion }) {
           <div className="container">
             <div className={styles.cardsGrid}>
               {hsk2Levels.map((lvl) => (
-                <div
+                <Link
                   key={lvl.id}
+                  to={`/vocabulary/hsk2/${lvl.slug}`}
                   className={styles.levelCard}
-                  onClick={() => navigate(`/vocabulary/hsk2/${lvl.slug}`)}
+                  aria-label={`Xem danh sách bài học ${lvl.label} - ${lvl.sublabel}`}
                 >
                   {/* Top Row: Badge & Sublabel */}
                   <div>
@@ -248,7 +249,7 @@ export default function Vocabulary({ version: propVersion }) {
                       Xem danh sách bài học <span className={styles.arrowIcon}>→</span>
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

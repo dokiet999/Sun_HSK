@@ -165,7 +165,8 @@ api.interceptors.response.use(
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
       if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+        const currentPath = window.location.pathname + window.location.search;
+        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
       }
       return Promise.reject(refreshErr);
     } finally {

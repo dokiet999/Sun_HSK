@@ -35,7 +35,9 @@ export default function LoginForm() {
         if (data.result.user && data.result.user.role === 'ADMIN') {
           navigate('/admin')
         } else {
-          const from = location.state?.from || '/'
+          const searchParams = new URLSearchParams(location.search)
+          const redirectParam = searchParams.get('redirect')
+          const from = location.state?.from || (redirectParam ? decodeURIComponent(redirectParam) : '/')
           navigate(from, { replace: true })
         }
       } else {
@@ -79,7 +81,7 @@ export default function LoginForm() {
           </p>
 
           <form onSubmit={handleSubmit} className={styles.form} noValidate>
-            {location.state?.from && (
+            {(location.state?.from || location.search.includes('redirect=')) && (
               <div className={styles.noticeBanner}>
                 ℹ️ Vui lòng đăng nhập để bắt đầu làm bài thi.
               </div>

@@ -97,8 +97,8 @@ export default function TakeExam() {
 
     } catch (error) {
       console.error('Không thể tải đề thi hoặc tạo phiên làm bài:', error)
-      if (error.response?.status === 401) {
-        navigate('/login', { state: { from: location.pathname } })
+      if (error.response?.status === 401 || !localStorage.getItem('token')) {
+        navigate('/login', { state: { from: location.pathname + location.search } })
         return
       }
       alert('Không thể tải đề thi hoặc tạo phiên làm bài.')
