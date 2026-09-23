@@ -39,7 +39,7 @@ export default function TakeExamHsk3() {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) {
-      navigate('/login', { state: { from: location.pathname } })
+      navigate('/login', { state: { from: location.pathname + location.search } })
       return
     }
 
@@ -58,8 +58,8 @@ export default function TakeExamHsk3() {
         setTimeLeft(limitMinutes * 60)
       } catch (err) {
         console.error('Không thể tải đề thi hoặc tạo phiên làm bài iBT:', err)
-        if (err.response?.status === 401) {
-          navigate('/login', { state: { from: location.pathname } })
+        if (err.response?.status === 401 || !localStorage.getItem('token')) {
+          navigate('/login', { state: { from: location.pathname + location.search } })
           return
         }
         alert('Không thể kết nối phòng thi HSK 3.0 iBT.')

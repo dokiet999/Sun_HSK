@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, Link } from "react-router-dom"
 import { examService } from "../services/examService"
 import styles from "./ExamIntro.module.css"
 
@@ -42,12 +42,17 @@ const HSK_STANDARD_BREAKDOWN = {
 
 const QUESTION_TYPE_LABELS = {
   MULTIPLE_CHOICE: "Trắc nghiệm chọn đáp án",
+  FILL_IN_BLANK: "Điền từ vào chỗ trống",
   TRUE_FALSE: "Đúng / Sai",
-  MATCHING: "Nối tranh / Ghép đáp án",
-  IMAGE_SINGLE_CHOICE: "Chọn tranh phù hợp",
-  REORDER_WORDS: "Sắp xếp từ thành câu",
-  FILL_BLANK: "Điền từ vào chỗ trống",
+  MATCHING: "Nối cặp",
+  PICTURE_SELECTION: "Chọn tranh phù hợp",
+  DIALOGUE_LISTENING: "Nghe hội thoại chọn đáp án",
+  SENTENCE_ORDERING: "Sắp xếp câu",
   WRITING: "Viết câu / đoạn văn",
+  // Legacy / fallback aliases
+  FILL_BLANK: "Điền từ vào chỗ trống",
+  IMAGE_SINGLE_CHOICE: "Chọn tranh phù hợp",
+  REORDER_WORDS: "Sắp xếp câu",
   ESSAY: "Viết đoạn văn",
   AUDIO_CHOICE: "Nghe chọn đáp án"
 }
@@ -149,9 +154,9 @@ export default function ExamIntro() {
     <div className={styles.page}>
       {/* Header */}
       <header className={styles.header}>
-        <div className={styles.logo} onClick={() => navigate('/')} role="button" tabIndex={0}>
+        <Link to="/" className={styles.logo} aria-label="Về trang chủ">
           Sun<span>HSK</span>
-        </div>
+        </Link>
         <button className={styles.backBtn} onClick={() => navigate(-1)}>
           ← Quay lại danh sách
         </button>

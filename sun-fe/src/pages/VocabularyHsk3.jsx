@@ -230,10 +230,11 @@ export default function VocabularyHsk3() {
               {filteredLevels.map((lvl) => {
                 const tierInfo = HSK3_TIERS[lvl.id];
                 return (
-                  <div
+                  <Link
                     key={lvl.id}
+                    to={`/vocabulary/hsk3/${lvl.slug}`}
                     className={styles.levelCard}
-                    onClick={() => navigate(`/vocabulary/hsk3/${lvl.slug}`)}
+                    aria-label={`Xem danh sách bài học ${lvl.label} - ${lvl.sublabel}`}
                   >
                     {/* Top Row: Badge & Tier */}
                     <div>
@@ -283,7 +284,7 @@ export default function VocabularyHsk3() {
                         Xem danh sách bài học <span className={styles.arrowIcon}>→</span>
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
